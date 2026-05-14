@@ -320,7 +320,13 @@
         <script>
           document.addEventListener('DOMContentLoaded', async () => {
             const container = document.getElementById('pricingTeaser');
+            console.log('Fetching teaser plans...');
             try {
+              if (!window.supabaseClient) {
+                console.error('Supabase client not initialized');
+                container.innerHTML = '<div class="col-span-full text-center py-10">System error.</div>';
+                return;
+              }
               const { data: plans, error } = await window.supabaseClient
                 .from('subscription_plans')
                 .select('*')
@@ -443,7 +449,7 @@
   <div class="border-t">
     <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
       <p>© 2026 GSTverify. All rights reserved.</p>
-      <p>Demo prototype — backend not connected.</p>
+      <p>Official Platform for GST Verification Services.</p>
     </div>
   </div>
 </footer>
