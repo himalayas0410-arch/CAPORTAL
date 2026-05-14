@@ -174,9 +174,18 @@
           const data = await window.authBackend.signIn(email, password);
           
           if (data) {
-            if (window.showToast) window.showToast('Login successful!', 'success');
+            // Check role for redirection
+            const profile = await window.profileBackend.getProfile();
+            const isAdmin = profile && profile.role === 'admin';
+            
+            if (window.showToast) window.showToast(`Login successful! Redirecting as ${isAdmin ? 'Admin' : 'User'}...`, 'success');
+            
             setTimeout(() => {
-              window.location.href = 'dashboard/index.html';
+              if (isAdmin) {
+                window.location.href = 'admin/dashboard.html';
+              } else {
+                window.location.href = 'dashboard/index.html';
+              }
             }, 1000);
           } else {
             btn.innerText = originalText;
