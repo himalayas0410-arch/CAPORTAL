@@ -168,37 +168,56 @@
 
   <script src="assets/js/main.js"></script>
   <script>
-    document.getElementById('registerForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const company = document.getElementById('company').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const mobile = document.getElementById('mobile').value.trim();
-      const gstin = document.getElementById('gstin').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('registerForm');
+      if (!form) return;
 
-      if (password !== confirmPassword) {
-        window.showToast('Passwords do not match!', 'error');
-        return;
-      }
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!window.authBackend) {
+          console.error('authBackend not loaded');
+          if (window.showToast) window.showToast('Authentication module missing. Please refresh.', 'error');
+          return;
+        }
 
-      const btn = e.target.querySelector('button[type="submit"]');
-      const originalText = btn.innerText;
-      btn.innerText = 'Creating account...';
-      btn.disabled = true;
+        const name = document.getElementById('name').value.trim();
+        const company = document.getElementById('company').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const mobile = document.getElementById('mobile').value.trim();
+        const gstin = document.getElementById('gstin').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
 
-      const data = await window.authBackend.signUp(email, password, name, company, mobile, gstin);
+        if (password !== confirmPassword) {
+          if (window.showToast) window.showToast('Passwords do not match!', 'error');
+          return;
+        }
 
-      if (data) {
-        window.showToast('Registration successful! Redirecting to checkout...', 'success');
-        setTimeout(() => {
-          window.location.href = 'checkout.html';
-        }, 1500);
-      } else {
-        btn.innerText = originalText;
-        btn.disabled = false;
-      }
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalText = btn.innerText;
+        btn.innerText = 'Creating account...';
+        btn.disabled = true;
+
+        try {
+          const data = await window.authBackend.signUp(email, password, name, company, mobile, gstin);
+
+          if (data) {
+            if (window.showToast) window.showToast('Registration successful! Redirecting to checkout...', 'success');
+            setTimeout(() => {
+              window.location.href = 'checkout.html';
+            }, 1500);
+          } else {
+            btn.innerText = originalText;
+            btn.disabled = false;
+          }
+        } catch (err) {
+          console.error('Signup submit error:', err);
+          if (window.showToast) window.showToast(err.message || 'An unexpected error occurred', 'error');
+          btn.innerText = originalText;
+          btn.disabled = false;
+        }
+      });
     });
   </script>
 

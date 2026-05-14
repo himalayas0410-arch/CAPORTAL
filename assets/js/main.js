@@ -63,21 +63,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Public components are now loaded via iframes in the HTML directly.
 
-  // --- Toast Functionality ---
-  window.showToast = (message, type = 'success') => {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerText = message;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }, 100);
-  };
 });
+
+// --- Toast Functionality ---
+window.showToast = (message, type = 'success') => {
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerText = message;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }, 100);
+};
 
 function navigateTo(url) {
   window.location.href = url;

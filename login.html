@@ -143,28 +143,46 @@
 
   <script src="assets/js/main.js"></script>
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const remember = document.getElementById('remember').checked;
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('loginForm');
+      if (!form) return;
 
-      const btn = e.target.querySelector('button[type="submit"]');
-      const originalText = btn.innerText;
-      btn.innerText = 'Signing in...';
-      btn.disabled = true;
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!window.authBackend) {
+          console.error('authBackend not loaded');
+          if (window.showToast) window.showToast('Authentication module missing. Please refresh.', 'error');
+          return;
+        }
 
-      const data = await window.authBackend.signIn(email, password);
-      
-      if (data) {
-        window.showToast('Login successful!', 'success');
-        setTimeout(() => {
-          window.location.href = 'dashboard/index.html';
-        }, 1000);
-      } else {
-        btn.innerText = originalText;
-        btn.disabled = false;
-      }
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalText = btn.innerText;
+        btn.innerText = 'Signing in...';
+        btn.disabled = true;
+
+        try {
+          const data = await window.authBackend.signIn(email, password);
+          
+          if (data) {
+            if (window.showToast) window.showToast('Login successful!', 'success');
+            setTimeout(() => {
+              window.location.href = 'dashboard/index.html';
+            }, 1000);
+          } else {
+            btn.innerText = originalText;
+            btn.disabled = false;
+          }
+        } catch (err) {
+          console.error('Login submit error:', err);
+          if (window.showToast) window.showToast(err.message || 'An unexpected error occurred', 'error');
+          btn.innerText = originalText;
+          btn.disabled = false;
+        }
+      });
     });
   </script>
 
