@@ -109,8 +109,8 @@
             const isPopular = p.slug.includes('professional');
             const isCustom = p.price === 0;
             return `
-              <div class="card flex flex-col p-8 ${isPopular ? 'relative border-primary shadow-xl ring-1 ring-primary/20' : ''}">
-                ${isPopular ? '<div class="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground uppercase">Most Popular</div>' : ''}
+              <div class="card flex flex-col p-8 ${isPopular ? 'relative border-primary shadow-xl ring-1 ring-primary/20 pt-10' : ''}">
+                ${isPopular ? '<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary px-4 py-1 text-[10px] font-bold text-primary-foreground uppercase tracking-widest whitespace-nowrap z-10">Most Popular</div>' : ''}
                 <h3 class="text-xl font-bold">${p.name}</h3>
                 <p class="mt-2 text-sm text-muted-foreground">${p.description || 'Perfect for your needs'}</p>
                 <div class="mt-6 flex items-baseline gap-1">

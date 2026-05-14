@@ -342,8 +342,8 @@
               }
 
               container.innerHTML = displayPlans.map((p, i) => `
-                <div class="rounded-xl border ${p.slug.includes('professional') ? 'border-primary shadow-card' : 'bg-card'} p-6 relative flex flex-col">
-                  ${p.slug.includes('professional') ? '<span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Most Popular</span>' : ''}
+                <div class="rounded-xl border ${p.slug.includes('professional') ? 'border-primary shadow-card pt-8' : 'bg-card'} p-6 relative flex flex-col">
+                  ${p.slug.includes('professional') ? '<span class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest whitespace-nowrap z-10">Most Popular</span>' : ''}
                   <p class="text-sm font-medium text-muted-foreground">${p.name}</p>
                   <p class="mt-2 font-serif text-3xl font-bold">${p.price > 0 ? '₹' + p.price.toLocaleString() : 'Custom'}</p>
                   <p class="text-xs text-muted-foreground">${p.price > 0 ? (p.validity_days >= 365 ? '1 Year' : p.validity_days + ' Days') : 'For large teams'}</p>
