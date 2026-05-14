@@ -309,65 +309,61 @@
           </a>
         </div>
 
-        <div class="mt-10 grid gap-5 lg:grid-cols-3">
-          <div class="rounded-xl border bg-card p-6">
-            <p class="text-sm font-medium text-muted-foreground">Basic</p>
-            <p class="mt-2 font-serif text-3xl font-bold">₹9,999</p>
-            <p class="text-xs text-muted-foreground">1 Year</p>
-            <ul class="mt-5 space-y-2 text-sm">
-              <li class="flex gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Excel upload (up to 5,000 GSTIN/month)
-              </li>
-              <li class="flex gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Bulk GSTIN status check
-              </li>
-              <li class="flex gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Excel report download
-              </li>
-            </ul>
-          </div>
-          <div class="rounded-xl border border-primary bg-card p-6 shadow-card">
-            <p class="text-sm font-medium text-muted-foreground">Professional</p>
-            <p class="mt-2 font-serif text-3xl font-bold">₹19,999</p>
-            <p class="text-xs text-muted-foreground">1 Year</p>
-            <ul class="mt-5 space-y-2 text-sm">
-              <li class="flex gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Excel upload (up to 25,000 GSTIN/month)
-              </li>
-              <li class="flex gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Bulk GSTIN status check
-              </li>
-              <li class="flex gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Excel report download
-              </li>
-            </ul>
-          </div>
-          <div class="rounded-xl border bg-card p-6">
-            <p class="text-sm font-medium text-muted-foreground">Enterprise</p>
-            <p class="mt-2 font-serif text-3xl font-bold">Custom</p>
-            <p class="text-xs text-muted-foreground">Custom</p>
-            <ul class="mt-5 space-y-2 text-sm">
-              <li class="flex gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Unlimited GSTIN verification
-              </li>
-              <li class="flex gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                Dedicated account manager
-              </li>
-              <li class="flex gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                API access (on request)
-              </li>
-            </ul>
+        <div id="pricingTeaser" class="mt-10 grid gap-5 lg:grid-cols-3">
+          <!-- Populated by JS -->
+          <div class="col-span-full py-20 text-center">
+            <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            <p class="mt-4 text-muted-foreground">Loading best plans for you...</p>
           </div>
         </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('pricingTeaser');
+            try {
+              const { data: plans, error } = await window.supabaseClient
+                .from('subscription_plans')
+                .select('*')
+                .eq('is_active', true)
+                .order('price', { ascending: true })
+                .limit(3);
+
+              if (error) throw error;
+
+              if (!plans || plans.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-10">No active plans found.</div>';
+                return;
+              }
+
+              container.innerHTML = plans.map((p, i) => `
+                <div class="rounded-xl border ${i === 1 ? 'border-primary shadow-card' : 'bg-card'} p-6 relative">
+                  ${i === 1 ? '<span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Most Popular</span>' : ''}
+                  <p class="text-sm font-medium text-muted-foreground">${p.name}</p>
+                  <p class="mt-2 font-serif text-3xl font-bold">₹${p.price.toLocaleString()}</p>
+                  <p class="text-xs text-muted-foreground">${p.validity_days >= 365 ? '1 Year' : p.validity_days + ' Days'}</p>
+                  <ul class="mt-5 space-y-2 text-sm">
+                    <li class="flex gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      ${p.features.records === 'unlimited' ? 'Unlimited' : p.features.records.toLocaleString()} GSTIN verifications
+                    </li>
+                    <li class="flex gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      ${p.max_simultaneous_users} Simultaneous user(s)
+                    </li>
+                    <li class="flex gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      ${p.features.support.charAt(0).toUpperCase() + p.features.support.slice(1)} Support
+                    </li>
+                  </ul>
+                  <a href="checkout.html?plan=${p.slug}" class="btn ${i === 1 ? 'btn-primary' : 'btn-outline'} w-full mt-6 rounded-xl">Get Started</a>
+                </div>
+              `).join('');
+            } catch (err) {
+              console.error('Error loading pricing:', err);
+              container.innerHTML = '<div class="col-span-full text-center py-10">Failed to load pricing.</div>';
+            }
+          });
+        </script>
       </div>
     </section>
 
