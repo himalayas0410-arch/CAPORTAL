@@ -46,14 +46,18 @@ const auth = {
 
     async signOut() {
         try {
-            const { error } = await window.supabaseClient.auth.signOut();
-            if (error) throw error;
+            await window.supabaseClient.auth.signOut();
             
-            // Redirect to home
-            window.location.href = '/login.html';
+            // Determine redirect path (relative to current location)
+            const path = window.location.pathname;
+            const redirectUrl = (path.includes('/dashboard/') || path.includes('/admin/')) ? '../login.html' : 'login.html';
+            window.location.href = redirectUrl;
         } catch (error) {
             console.error('Logout error:', error.message);
-            window.showToast(error.message, 'error');
+            // Redirect anyway for better UX
+            const path = window.location.pathname;
+            const redirectUrl = (path.includes('/dashboard/') || path.includes('/admin/')) ? '../login.html' : 'login.html';
+            window.location.href = redirectUrl;
         }
     },
 
@@ -80,7 +84,9 @@ const auth = {
     async protectPage() {
         const user = await this.getCurrentUser();
         if (!user) {
-            window.location.href = '/login.html';
+            const path = window.location.pathname;
+            const redirectUrl = (path.includes('/dashboard/') || path.includes('/admin/')) ? '../login.html' : 'login.html';
+            window.location.href = redirectUrl;
         }
         return user;
     },
@@ -95,7 +101,7 @@ const auth = {
                 .single();
             
             if (error || profile.role !== 'admin') {
-                window.location.href = '/dashboard/index.html';
+                window.location.href = 'index.html';
             }
         }
     }
