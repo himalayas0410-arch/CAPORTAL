@@ -45,8 +45,8 @@ Deno.serve(async (req: Request) => {
 
     const text = await fileData.text();
     // Simple CSV parser for demo
-    const lines = text.split("\n").filter(line => line.trim() !== "");
-    const gstinList = lines.slice(1).map(line => line.split(",")[0].trim());
+    const lines = text.split("\n").filter((line: string) => line.trim() !== "");
+    const gstinList = lines.slice(1).map((line: string) => line.split(",")[0].trim());
 
     await supabase
       .from("gstin_uploads")
@@ -108,7 +108,8 @@ Deno.serve(async (req: Request) => {
     });
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ error: err.message }), {
+    const message = err instanceof Error ? err.message : String(err);
+    return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
