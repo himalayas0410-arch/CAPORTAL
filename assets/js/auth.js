@@ -62,8 +62,19 @@ const auth = {
     },
 
     async getCurrentUser() {
-        const { data: { user } } = await window.supabaseClient.auth.getUser();
-        return user;
+        try {
+            // First try to get the session from memory/localstorage (fast)
+            const { data: { session } } = await window.supabaseClient.auth.getSession();
+            if (session?.user) return session.user;
+
+            // Fallback to network check
+            const { data: { user }, error } = await window.supabaseClient.auth.getUser();
+            if (error) return null;
+            return user;
+        } catch (err) {
+            console.error('Error in getCurrentUser:', err);
+            return null;
+        }
     },
 
     async createUserSession(userId, token) {
