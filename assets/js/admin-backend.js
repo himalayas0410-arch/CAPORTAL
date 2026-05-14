@@ -120,6 +120,36 @@ const admin = {
             console.error('Error fetching plans:', error.message);
             return [];
         }
+    },
+
+    async togglePlanStatus(planId, currentStatus) {
+        try {
+            const { error } = await window.supabaseClient
+                .from('subscription_plans')
+                .update({ is_active: !currentStatus })
+                .eq('id', planId);
+
+            if (error) throw error;
+            return { success: true };
+        } catch (error) {
+            console.error('Error toggling plan status:', error.message);
+            return { success: false, error: error.message };
+        }
+    },
+
+    async updatePlan(planId, updates) {
+        try {
+            const { error } = await window.supabaseClient
+                .from('subscription_plans')
+                .update(updates)
+                .eq('id', planId);
+
+            if (error) throw error;
+            return { success: true };
+        } catch (error) {
+            console.error('Error updating plan:', error.message);
+            return { success: false, error: error.message };
+        }
     }
 };
 

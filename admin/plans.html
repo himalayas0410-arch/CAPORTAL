@@ -67,6 +67,39 @@
     </div>
   </div>
 
+  <!-- Edit Plan Modal -->
+  <div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="card w-full max-w-md p-8 animate-in fade-in zoom-in duration-200">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold">Edit Plan</h3>
+        <button onclick="closeModal()" class="text-muted-foreground hover:text-foreground">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <form id="editForm" class="space-y-4">
+        <input type="hidden" id="editPlanId">
+        <div>
+          <label class="block text-sm font-medium mb-1">Plan Name</label>
+          <input type="text" id="editName" class="form-control" required>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Price (₹)</label>
+            <input type="number" id="editPrice" class="form-control" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Validity (Days)</label>
+            <input type="number" id="editValidity" class="form-control" required>
+          </div>
+        </div>
+        <div class="pt-4 flex gap-3">
+          <button type="button" onclick="closeModal()" class="btn btn-outline flex-1">Cancel</button>
+          <button type="submit" class="btn btn-primary flex-1">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="../assets/js/mock-data.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -75,6 +108,8 @@
       if (!user) return;
 
       const grid = document.getElementById('plansGrid');
+      const editModal = document.getElementById('editModal');
+      const editForm = document.getElementById('editForm');
       
       async function loadPlans() {
         const plans = await window.adminBackend.getPlans();
@@ -85,8 +120,13 @@
         }
 
         grid.innerHTML = plans.map(p => `
-          <div class="card p-6">
-             <h3 class="text-lg font-bold">${p.name}</h3>
+          <div class="card p-6 ${!p.is_active ? 'opacity-60 grayscale' : ''}">
+             <div class="flex items-start justify-between">
+                <h3 class="text-lg font-bold">${p.name}</h3>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${p.is_active ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}">
+                   ${p.is_active ? 'Active' : 'Inactive'}
+                </span>
+             </div>
              <p class="text-2xl font-bold mt-2">${p.price > 0 ? '₹' + p.price.toLocaleString() : 'Custom'}</p>
              <p class="text-xs text-muted-foreground">${p.validity_days} Days Validity</p>
              <ul class="mt-4 space-y-2 text-xs text-muted-foreground">
@@ -94,12 +134,56 @@
                 <li>• ${p.max_simultaneous_users} Simultaneous Users</li>
              </ul>
              <div class="mt-6 pt-4 border-t flex gap-2">
-                <button onclick="alert('Editing plan: ${p.name}')" class="btn btn-outline btn-sm flex-1">Edit</button>
-                <button onclick="alert('Deactivating plan: ${p.id}')" class="btn btn-ghost btn-sm text-destructive">${p.is_active ? 'Deactivate' : 'Activate'}</button>
+                <button onclick="openEditModal('${p.id}', '${p.name}', ${p.price}, ${p.validity_days})" class="btn btn-outline btn-sm flex-1">Edit</button>
+                <button onclick="toggleStatus('${p.id}', ${p.is_active})" class="btn btn-ghost btn-sm ${p.is_active ? 'text-destructive' : 'text-success'}">
+                   ${p.is_active ? 'Deactivate' : 'Activate'}
+                </button>
              </div>
           </div>
         `).join('');
       }
+
+      window.openEditModal = (id, name, price, validity) => {
+        document.getElementById('editPlanId').value = id;
+        document.getElementById('editName').value = name;
+        document.getElementById('editPrice').value = price;
+        document.getElementById('editValidity').value = validity;
+        editModal.classList.remove('hidden');
+        editModal.classList.add('flex');
+      };
+
+      window.closeModal = () => {
+        editModal.classList.add('hidden');
+        editModal.classList.remove('flex');
+      };
+
+      window.toggleStatus = async (id, current) => {
+        if (!confirm(`Are you sure you want to ${current ? 'deactivate' : 'activate'} this plan?`)) return;
+        const res = await window.adminBackend.togglePlanStatus(id, current);
+        if (res.success) {
+          loadPlans();
+        } else {
+          alert('Error: ' + res.error);
+        }
+      };
+
+      editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editPlanId').value;
+        const updates = {
+          name: document.getElementById('editName').value,
+          price: parseFloat(document.getElementById('editPrice').value),
+          validity_days: parseInt(document.getElementById('editValidity').value)
+        };
+
+        const res = await window.adminBackend.updatePlan(id, updates);
+        if (res.success) {
+          closeModal();
+          loadPlans();
+        } else {
+          alert('Error: ' + res.error);
+        }
+      });
 
       loadPlans();
 
