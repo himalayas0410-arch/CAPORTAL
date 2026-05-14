@@ -316,81 +316,7 @@
             <p class="mt-4 text-muted-foreground">Loading best plans for you...</p>
           </div>
         </div>
-
-        <script>
-          document.addEventListener('DOMContentLoaded', async () => {
-            const container = document.getElementById('pricingTeaser');
-            console.log('Fetching teaser plans...');
-            try {
-              if (!window.supabaseClient) {
-                console.error('Supabase client not initialized');
-                container.innerHTML = '<div class="col-span-full text-center py-10">System error.</div>';
-                return;
-              }
-              const { data: plans, error } = await window.supabaseClient
-                .from('subscription_plans')
-                .select('*')
-                .eq('is_active', true)
-                .order('price', { ascending: true });
-
-              if (error) throw error;
-
-              // Filter: show first 2 paid plans + 1 custom/enterprise
-              const paidPlans = plans.filter(p => p.price > 0).slice(0, 2);
-              const customPlan = plans.find(p => p.price === 0 || p.slug === 'enterprise');
-              
-              const displayPlans = [...paidPlans];
-              if (customPlan) displayPlans.push(customPlan);
-
-              if (displayPlans.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-10">No active plans found.</div>';
-                return;
-              }
-
-              container.innerHTML = displayPlans.map((p, i) => `
-                <div class="rounded-xl border ${p.slug.includes('professional') ? 'border-primary shadow-card pt-8' : 'bg-card'} p-6 relative flex flex-col">
-                  ${p.slug.includes('professional') ? '<span class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest whitespace-nowrap z-10">Most Popular</span>' : ''}
-                  <p class="text-sm font-medium text-muted-foreground">${p.name}</p>
-                  <p class="mt-2 font-serif text-3xl font-bold">${p.price > 0 ? '₹' + p.price.toLocaleString() : 'Custom'}</p>
-                  <p class="text-xs text-muted-foreground">${p.price > 0 ? (p.validity_days >= 365 ? '1 Year' : p.validity_days + ' Days') : 'For large teams'}</p>
-                  <ul class="mt-5 space-y-2 text-sm flex-1">
-                    <li class="flex gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                      ${p.features.records === 'unlimited' ? 'Unlimited' : p.features.records.toLocaleString()} GSTIN verifications
-                    </li>
-                    <li class="flex gap-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                      ${p.max_simultaneous_users} Simultaneous user(s)
-                    </li>
-                  </ul>
-                  <a href="${p.price > 0 ? 'checkout.html?plan=' + p.slug : 'contact.html'}" class="btn ${p.slug.includes('professional') ? 'btn-primary' : 'btn-outline'} w-full mt-6 rounded-xl">
-                    ${p.price > 0 ? 'Get Started' : 'Contact Sales'}
-                  </a>
-                </div>
-              `).join('');
-
-              // Always ensure 3 cards for layout
-              if (displayPlans.length < 3 && !customPlan) {
-                container.insertAdjacentHTML('beforeend', `
-                  <div class="rounded-xl border bg-card p-6 relative flex flex-col">
-                    <p class="text-sm font-medium text-muted-foreground">Enterprise</p>
-                    <p class="mt-2 font-serif text-3xl font-bold">Custom</p>
-                    <p class="text-xs text-muted-foreground">Tailored for your firm</p>
-                    <ul class="mt-5 space-y-2 text-sm flex-1">
-                      <li class="flex gap-2"><svg ...></svg>Unlimited verifications</li>
-                      <li class="flex gap-2"><svg ...></svg>Custom API access</li>
-                    </ul>
-                    <a href="contact.html" class="btn btn-outline w-full mt-6 rounded-xl">Contact Sales</a>
-                  </div>
-                `);
-              }
-
-            } catch (err) {
-              console.error('Error loading pricing:', err);
-              container.innerHTML = '<div class="col-span-full text-center py-10">Failed to load pricing.</div>';
-            }
-          });
-        </script>
+      </div>
       </div>
     </section>
 
@@ -468,6 +394,82 @@
   <script src="assets/js/profile-backend.js"></script>
   <script src="assets/js/contact-support-backend.js"></script>
   <script src="assets/js/admin-backend.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const container = document.getElementById('pricingTeaser');
+      if (!container) return;
+      
+      console.log('Fetching teaser plans from bottom...');
+      try {
+        if (!window.supabaseClient) {
+          console.error('Supabase client not ready');
+          container.innerHTML = '<div class="col-span-full text-center py-10">System initialization...</div>';
+          return;
+        }
+        const { data: plans, error } = await window.supabaseClient
+          .from('subscription_plans')
+          .select('*')
+          .eq('is_active', true)
+          .order('price', { ascending: true });
+
+        if (error) throw error;
+
+        // Filter: show first 2 paid plans + 1 custom/enterprise
+        const paidPlans = (plans || []).filter(p => p.price > 0).slice(0, 2);
+        const customPlan = (plans || []).find(p => p.price === 0 || p.slug === 'enterprise');
+        
+        const displayPlans = [...paidPlans];
+        if (customPlan) displayPlans.push(customPlan);
+
+        if (displayPlans.length === 0) {
+          container.innerHTML = '<div class="col-span-full text-center py-10">No active plans found.</div>';
+          return;
+        }
+
+        container.innerHTML = displayPlans.map((p, i) => `
+          <div class="rounded-xl border ${p.slug.includes('professional') ? 'border-primary shadow-card pt-8' : 'bg-card'} p-6 relative flex flex-col">
+            ${p.slug.includes('professional') ? '<span class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest whitespace-nowrap z-10">Most Popular</span>' : ''}
+            <p class="text-sm font-medium text-muted-foreground">${p.name}</p>
+            <p class="mt-2 font-serif text-3xl font-bold">${p.price > 0 ? '₹' + p.price.toLocaleString() : 'Custom'}</p>
+            <p class="text-xs text-muted-foreground">${p.price > 0 ? (p.validity_days >= 365 ? '1 Year' : p.validity_days + ' Days') : 'For large teams'}</p>
+            <ul class="mt-5 space-y-2 text-sm flex-1">
+              <li class="flex gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                ${p.features.records === 'unlimited' ? 'Unlimited' : p.features.records.toLocaleString()} GSTIN verifications
+              </li>
+              <li class="flex gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                ${p.max_simultaneous_users} Simultaneous user(s)
+              </li>
+            </ul>
+            <a href="${p.price > 0 ? 'checkout.html?plan=' + p.slug : 'contact.html'}" class="btn ${p.slug.includes('professional') ? 'btn-primary' : 'btn-outline'} w-full mt-6 rounded-xl">
+              ${p.price > 0 ? 'Get Started' : 'Contact Sales'}
+            </a>
+          </div>
+        `).join('');
+
+        // Always ensure 3 cards for layout
+        if (displayPlans.length < 3 && !customPlan) {
+          container.insertAdjacentHTML('beforeend', `
+            <div class="rounded-xl border bg-card p-6 relative flex flex-col">
+              <p class="text-sm font-medium text-muted-foreground">Enterprise</p>
+              <p class="mt-2 font-serif text-3xl font-bold">Custom</p>
+              <p class="text-xs text-muted-foreground">Tailored for your firm</p>
+              <ul class="mt-5 space-y-2 text-sm flex-1">
+                <li class="flex gap-2"><svg ...></svg>Unlimited verifications</li>
+                <li class="flex gap-2"><svg ...></svg>Custom API access</li>
+              </ul>
+              <a href="contact.html" class="btn btn-outline w-full mt-6 rounded-xl">Contact Sales</a>
+            </div>
+          `);
+        }
+      } catch (err) {
+        console.error('Error loading pricing teaser:', err);
+        container.innerHTML = '<div class="col-span-full text-center py-10">Pricing temporarily unavailable.</div>';
+      }
+    });
+  </script>
 </body>
 </html>
 
