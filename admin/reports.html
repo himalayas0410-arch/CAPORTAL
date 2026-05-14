@@ -41,21 +41,8 @@
                       <th class="px-5 py-3">Status</th>
                    </tr>
                 </thead>
-                <tbody>
-                   <tr class="border-t border-slate-100">
-                      <td class="px-5 py-3 font-mono text-xs text-primary">RPT-1001</td>
-                      <td class="px-5 py-3">Rahul Sharma</td>
-                      <td class="px-5 py-3">vendor-list.xlsx</td>
-                      <td class="px-5 py-3 text-right">250</td>
-                      <td class="px-5 py-3 text-success">Completed</td>
-                   </tr>
-                   <tr class="border-t border-slate-100">
-                      <td class="px-5 py-3 font-mono text-xs text-primary">RPT-1002</td>
-                      <td class="px-5 py-3">Neha Gupta</td>
-                      <td class="px-5 py-3">suppliers.csv</td>
-                      <td class="px-5 py-3 text-right">120</td>
-                      <td class="px-5 py-3 text-success">Completed</td>
-                   </tr>
+                <tbody id="reportsBody">
+                   <!-- Backend populated -->
                 </tbody>
              </table>
           </div>
@@ -63,6 +50,50 @@
       </main>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Protect Admin Page
+      const user = await window.authBackend.protectAdminPage();
+      if (!user) return;
+
+      const tbody = document.getElementById('reportsBody');
+
+      async function loadReports() {
+        const reports = await window.adminBackend.getReports(1, 50);
+        
+        if (reports.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-muted-foreground">No verification logs found</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = reports.map(r => `
+          <tr class="border-t border-slate-100 hover:bg-slate-50">
+            <td class="px-5 py-3 font-mono text-xs text-primary">RPT-${r.id.substring(0, 8).toUpperCase()}</td>
+            <td class="px-5 py-3">
+               <div class="font-medium">${r.profiles ? r.profiles.full_name || 'No Name' : 'N/A'}</div>
+               <div class="text-xs text-muted-foreground">${r.profiles ? r.profiles.email : ''}</div>
+            </td>
+            <td class="px-5 py-3 text-muted-foreground">${r.file_name}</td>
+            <td class="px-5 py-3 text-right">${r.total_records}</td>
+            <td class="px-5 py-3">
+               <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-success/10 text-success">Completed</span>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      loadReports();
+
+      // Logout
+      document.querySelectorAll('.admin-nav-link[href="../index.html"]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          await window.authBackend.signOut();
+        });
+      });
+    });
+  </script>
 
   
 

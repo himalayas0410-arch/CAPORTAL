@@ -63,40 +63,68 @@
 
   <script src="../assets/js/mock-data.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Protect Admin Page
+      const user = await window.authBackend.protectAdminPage();
+      if (!user) return;
+
       const tbody = document.getElementById('subscribersBody');
       const searchInput = document.getElementById('searchInput');
 
-      function render(query = '') {
-        const filtered = MOCK_SUBSCRIBERS.filter(s => 
-          s.name.toLowerCase().includes(query) || 
-          s.company.toLowerCase().includes(query) ||
-          s.email.toLowerCase().includes(query)
+      async function loadSubscribers(query = '') {
+        // For now, we'll fetch all and filter in JS if search is small
+        // In production, use Supabase search
+        const allSubscribers = await window.adminBackend.getSubscribers(1, 100);
+        
+        const filtered = allSubscribers.filter(s => 
+          (s.full_name || '').toLowerCase().includes(query) || 
+          (s.company_name || '').toLowerCase().includes(query) ||
+          (s.email || '').toLowerCase().includes(query)
         );
 
-        tbody.innerHTML = filtered.map(s => `
-          <tr class="border-t border-slate-100 hover:bg-slate-50">
-            <td class="px-5 py-3">
-               <div class="font-medium">${s.name}</div>
-               <div class="text-xs text-muted-foreground">${s.email}</div>
-            </td>
-            <td class="px-5 py-3 text-muted-foreground">${s.company}</td>
-            <td class="px-5 py-3">${s.plan}</td>
-            <td class="px-5 py-3">
-               <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                 s.status === 'Active' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
-               }">${s.status}</span>
-            </td>
-            <td class="px-5 py-3 text-muted-foreground">${s.expiry}</td>
-            <td class="px-5 py-3 text-right">
-               <button onclick="alert('Subscriber edit mode...')" class="btn btn-ghost btn-sm">Edit</button>
-            </td>
-          </tr>
-        `).join('');
+        if (filtered.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="py-10 text-center text-muted-foreground">No subscribers found</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(s => {
+          const sub = s.subscriptions && s.subscriptions.length > 0 ? s.subscriptions[0] : null;
+          const planName = sub && sub.subscription_plans ? sub.subscription_plans.name : 'No Plan';
+          const status = sub ? sub.status : 'Inactive';
+          const expiry = sub ? new Date(sub.end_date).toLocaleDateString() : 'N/A';
+
+          return `
+            <tr class="border-t border-slate-100 hover:bg-slate-50">
+              <td class="px-5 py-3">
+                 <div class="font-medium">${s.full_name || 'No Name'}</div>
+                 <div class="text-xs text-muted-foreground">${s.email}</div>
+              </td>
+              <td class="px-5 py-3 text-muted-foreground">${s.company_name || 'N/A'}</td>
+              <td class="px-5 py-3">${planName}</td>
+              <td class="px-5 py-3">
+                 <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                   status === 'active' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+                 }">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+              </td>
+              <td class="px-5 py-3 text-muted-foreground">${expiry}</td>
+              <td class="px-5 py-3 text-right">
+                 <button onclick="alert('Viewing details for ${s.id}')" class="btn btn-ghost btn-sm">View</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
       }
 
-      searchInput.addEventListener('input', (e) => render(e.target.value.toLowerCase()));
-      render();
+      searchInput.addEventListener('input', (e) => loadSubscribers(e.target.value.toLowerCase()));
+      loadSubscribers();
+
+      // Logout
+      document.querySelectorAll('.admin-nav-link[href="../index.html"]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          await window.authBackend.signOut();
+        });
+      });
     });
   </script>
 

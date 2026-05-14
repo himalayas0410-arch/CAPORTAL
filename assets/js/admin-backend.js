@@ -1,46 +1,58 @@
 // Admin Backend Logic
 const admin = {
-    async getDashboardStats() {
+    async getStats() {
         try {
-            // This is a mock implementation of stats gathering
-            // In a real app, you might use a Postgres function or multiple count queries
-            
-            const { count: subscribers } = await window.supabaseClient
+            const { count: totalSubscribers } = await window.supabaseClient
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
                 .eq('role', 'subscriber');
 
-            const { count: activeSubs } = await window.supabaseClient
+            const { count: activeSubscribers } = await window.supabaseClient
                 .from('subscriptions')
                 .select('*', { count: 'exact', head: true })
                 .eq('status', 'active');
 
-            const { data: totalPayments } = await window.supabaseClient
-                .rpc('sum_payments'); // We'll need to define this function
+            const { data: totalRevenue } = await window.supabaseClient
+                .rpc('sum_payments');
 
-            const { count: totalUploads } = await window.supabaseClient
-                .from('gstin_uploads')
+            const { count: totalGstin } = await window.supabaseClient
+                .from('reports')
                 .select('*', { count: 'exact', head: true });
 
             return {
-                subscribers: subscribers || 0,
-                activeSubscriptions: activeSubs || 0,
-                totalPayments: totalPayments || 0,
-                uploads: totalUploads || 0
+                totalSubscribers: totalSubscribers || 0,
+                activeSubscribers: activeSubscribers || 0,
+                totalRevenue: totalRevenue || 0,
+                totalGstin: totalGstin || 0
             };
         } catch (error) {
             console.error('Error fetching admin stats:', error.message);
-            return null;
+            return {
+                totalSubscribers: 0,
+                activeSubscribers: 0,
+                totalRevenue: 0,
+                totalGstin: 0
+            };
         }
     },
 
-    async getAllSubscribers() {
+    async getSubscribers(page = 1, limit = 10) {
         try {
+            const from = (page - 1) * limit;
+            const to = from + limit - 1;
+
             const { data, error } = await window.supabaseClient
                 .from('profiles')
-                .select('*, subscriptions(*)')
+                .select(`
+                    *,
+                    subscriptions (
+                        *,
+                        subscription_plans (name)
+                    )
+                `)
                 .eq('role', 'subscriber')
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false })
+                .range(from, to);
             
             if (error) throw error;
             return data;
@@ -50,17 +62,62 @@ const admin = {
         }
     },
 
-    async getAllPayments() {
+    async getPayments(page = 1, limit = 10) {
         try {
+            const from = (page - 1) * limit;
+            const to = from + limit - 1;
+
             const { data, error } = await window.supabaseClient
                 .from('payments')
-                .select('*, profiles(full_name, email), subscription_plans(name)')
-                .order('payment_date', { ascending: false });
+                .select(`
+                    *,
+                    profiles (full_name, email),
+                    subscription_plans (name)
+                `)
+                .order('payment_date', { ascending: false })
+                .range(from, to);
             
             if (error) throw error;
             return data;
         } catch (error) {
             console.error('Error fetching payments:', error.message);
+            return [];
+        }
+    },
+
+    async getReports(page = 1, limit = 10) {
+        try {
+            const from = (page - 1) * limit;
+            const to = from + limit - 1;
+
+            const { data, error } = await window.supabaseClient
+                .from('reports')
+                .select(`
+                    *,
+                    profiles (full_name, email)
+                `)
+                .order('created_at', { ascending: false })
+                .range(from, to);
+            
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error fetching reports:', error.message);
+            return [];
+        }
+    },
+
+    async getPlans() {
+        try {
+            const { data, error } = await window.supabaseClient
+                .from('subscription_plans')
+                .select('*')
+                .order('price', { ascending: true });
+            
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error fetching plans:', error.message);
             return [];
         }
     }
