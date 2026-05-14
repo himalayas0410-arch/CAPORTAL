@@ -98,16 +98,24 @@
             return;
           }
 
-          grid.innerHTML = plans.map((p, i) => {
-            const isPopular = p.slug.includes('professional') || i === 1;
+          // Separate paid and custom
+          const paidPlans = plans.filter(p => p.price > 0);
+          const customPlan = plans.find(p => p.price === 0 || p.slug === 'enterprise');
+          
+          const finalPlans = [...paidPlans];
+          if (customPlan) finalPlans.push(customPlan);
+
+          grid.innerHTML = finalPlans.map((p, i) => {
+            const isPopular = p.slug.includes('professional');
+            const isCustom = p.price === 0;
             return `
               <div class="card flex flex-col p-8 ${isPopular ? 'relative border-primary shadow-xl ring-1 ring-primary/20' : ''}">
                 ${isPopular ? '<div class="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground uppercase">Most Popular</div>' : ''}
                 <h3 class="text-xl font-bold">${p.name}</h3>
                 <p class="mt-2 text-sm text-muted-foreground">${p.description || 'Perfect for your needs'}</p>
                 <div class="mt-6 flex items-baseline gap-1">
-                  <span class="text-4xl font-bold">₹${p.price.toLocaleString()}</span>
-                  <span class="text-sm text-muted-foreground">/${p.validity_days >= 365 ? 'year' : 'mo'}</span>
+                  <span class="text-4xl font-bold">${isCustom ? 'Custom' : '₹' + p.price.toLocaleString()}</span>
+                  ${!isCustom ? `<span class="text-sm text-muted-foreground">/${p.validity_days >= 365 ? 'year' : 'mo'}</span>` : ''}
                 </div>
                 <ul class="mt-8 flex-1 space-y-4 text-sm">
                   <li class="flex items-center gap-3">
@@ -118,23 +126,16 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><polyline points="20 6 9 17 4 12"/></svg>
                     ${p.max_simultaneous_users} Simultaneous user(s)
                   </li>
-                  <li class="flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><polyline points="20 6 9 17 4 12"/></svg>
-                    ${p.features.support.charAt(0).toUpperCase() + p.features.support.slice(1)} Support
-                  </li>
-                  ${p.features.api_access ? `
-                  <li class="flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><polyline points="20 6 9 17 4 12"/></svg>
-                    API Access Included
-                  </li>` : ''}
                 </ul>
-                <a href="checkout.html?plan=${p.slug}" class="btn ${isPopular ? 'btn-primary' : 'btn-outline'} mt-8 w-full">Get Started</a>
+                <a href="${isCustom ? 'contact.html' : 'checkout.html?plan=' + p.slug}" class="btn ${isPopular ? 'btn-primary' : 'btn-outline'} mt-8 w-full">
+                   ${isCustom ? 'Contact Sales' : 'Get Started'}
+                </a>
               </div>
             `;
           }).join('');
 
-          // Add Enterprise card if not in DB
-          if (plans.length < 3) {
+          // Always ensure at least one enterprise card if not in DB
+          if (!customPlan) {
             grid.insertAdjacentHTML('beforeend', `
               <div class="card flex flex-col p-8">
                 <h3 class="text-xl font-bold">Enterprise</h3>
@@ -143,18 +144,8 @@
                   <span class="text-4xl font-bold">Custom</span>
                 </div>
                 <ul class="mt-8 flex-1 space-y-4 text-sm">
-                  <li class="flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><polyline points="20 6 9 17 4 12"/></svg>
-                    Unlimited verifications
-                  </li>
-                  <li class="flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><polyline points="20 6 9 17 4 12"/></svg>
-                    API Integration
-                  </li>
-                  <li class="flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><polyline points="20 6 9 17 4 12"/></svg>
-                    Dedicated Account Manager
-                  </li>
+                  <li class="flex items-center gap-3"><svg ...></svg>Unlimited verifications</li>
+                  <li class="flex items-center gap-3"><svg ...></svg>Dedicated Account Manager</li>
                 </ul>
                 <a href="contact.html" class="btn btn-outline mt-8 w-full">Contact Sales</a>
               </div>
