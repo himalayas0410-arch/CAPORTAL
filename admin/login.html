@@ -46,35 +46,51 @@
   </div>
 
   <script>
-    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!window.authBackend || !window.profileBackend) {
+          if (window.showToast) window.showToast('Backend modules still loading. Please wait a moment.', 'error');
+          return;
+        }
 
-      const btn = e.target.querySelector('button');
-      const originalText = btn.innerText;
-      btn.innerText = 'Verifying...';
-      btn.disabled = true;
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-      const user = await window.authBackend.signIn(email, password);
-      
-      if (user) {
-        const profile = await window.profileBackend.getProfile();
-        if (profile && profile.role === 'admin') {
-          window.showToast('Admin access granted!', 'success');
-          setTimeout(() => {
-            window.location.href = 'dashboard.html';
-          }, 1000);
-        } else {
-          window.showToast('Unauthorized. Admin role required.', 'error');
-          await window.authBackend.signOut();
+        const btn = e.target.querySelector('button');
+        const originalText = btn.innerText;
+        btn.innerText = 'Verifying...';
+        btn.disabled = true;
+
+        try {
+          const data = await window.authBackend.signIn(email, password);
+          
+          if (data) {
+            const profile = await window.profileBackend.getProfile();
+            if (profile && profile.role === 'admin') {
+              if (window.showToast) window.showToast('Admin access granted!', 'success');
+              setTimeout(() => {
+                window.location.href = 'dashboard.html';
+              }, 1000);
+            } else {
+              if (window.showToast) window.showToast('Unauthorized. Admin role required.', 'error');
+              await window.authBackend.signOut();
+              btn.innerText = originalText;
+              btn.disabled = false;
+            }
+          } else {
+            // Error already handled by signIn (shows toast)
+            btn.innerText = originalText;
+            btn.disabled = false;
+          }
+        } catch (error) {
+          console.error('Admin login error:', error);
+          if (window.showToast) window.showToast('An unexpected error occurred.', 'error');
           btn.innerText = originalText;
           btn.disabled = false;
         }
-      } else {
-        btn.innerText = originalText;
-        btn.disabled = false;
-      }
+      });
     });
   </script>
 
@@ -83,6 +99,7 @@
   <!-- Supabase Integration -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/main.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/subscription-backend.js"></script>
   <script src="../assets/js/upload-backend.js"></script>
