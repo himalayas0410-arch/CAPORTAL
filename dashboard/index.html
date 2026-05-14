@@ -160,31 +160,95 @@
   <script src="../assets/js/mock-data.js"></script>
   <script src="../assets/js/dashboard.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Protect Page
+      const user = await window.authBackend.protectPage();
+      if (!user) return;
+
+      // 2. Load Profile & Subscription
+      const profile = await window.profileBackend.getProfile();
+      const sub = await window.subscriptionBackend.getUserSubscription(user.id);
+
+      // 3. Update UI
+      if (profile) {
+        document.getElementById('userName').innerText = profile.full_name || user.email;
+      }
+
+      const planBadge = document.querySelector('.topbar .text-primary.bg-primary/10');
+      const planNameCard = document.querySelector('.card:nth-child(1) .text-success');
+      const planValidityDate = document.querySelector('.card:nth-child(2) .font-serif');
+      const planValidityRange = document.querySelector('.card:nth-child(2) .text-xs.text-muted-foreground');
+
+      if (sub) {
+        const planName = sub.subscription_plans.name;
+        planBadge.innerText = `${planName} Plan`;
+        planBadge.classList.remove('hidden');
+        planNameCard.innerText = planName;
+        
+        const endDate = new Date(sub.end_date);
+        planValidityDate.innerText = endDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+        
+        const startDate = new Date(sub.start_date);
+        planValidityRange.innerText = `From ${startDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+      } else {
+        planBadge.classList.add('hidden');
+        planNameCard.innerText = 'No Active Plan';
+        planNameCard.classList.remove('text-success');
+        planNameCard.classList.add('text-destructive');
+        planValidityDate.innerText = '--';
+        planValidityRange.innerText = 'Please subscribe to a plan';
+      }
+
+      // 4. Load Recent Reports
+      const uploads = await window.reportsBackend.getUserUploads();
       const tbody = document.getElementById('reportsTableBody');
-      const recentReports = MOCK_REPORTS.slice(0, 3);
+      const recentReports = uploads.slice(0, 5);
       
-      tbody.innerHTML = recentReports.map(r => `
-        <tr class="border-t border-border">
-          <td class="px-5 py-3 font-mono text-xs">${r.id}</td>
-          <td class="px-5 py-3">${r.fileName}</td>
-          <td class="px-5 py-3 text-muted-foreground">${r.date}</td>
-          <td class="px-5 py-3 text-right">${r.total}</td>
-          <td class="px-5 py-3">
-            <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-              r.status === 'Completed' ? 'bg-success text-success' : 
-              r.status === 'Failed' ? 'bg-destructive text-destructive' : 'bg-warning text-warning'
-            }" style="background-color: ${
-              r.status === 'Completed' ? 'rgba(16, 185, 129, 0.1)' : 
-              r.status === 'Failed' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)'
-            }">
-              ${r.status}
-            </span>
-          </td>
-        </tr>
-      `).join('');
+      if (recentReports.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-muted-foreground">No reports found. <a href="upload.html" class="text-primary hover:underline">Upload your first file</a></td></tr>';
+      } else {
+        tbody.innerHTML = recentReports.map(r => `
+          <tr class="border-t border-border">
+            <td class="px-5 py-3 font-mono text-xs">${r.id.substring(0, 8)}...</td>
+            <td class="px-5 py-3">${r.file_name}</td>
+            <td class="px-5 py-3 text-muted-foreground">${new Date(r.created_at).toLocaleDateString()}</td>
+            <td class="px-5 py-3 text-right">${r.total_records || '--'}</td>
+            <td class="px-5 py-3">
+              <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium" style="background-color: ${
+                r.status === 'completed' ? 'rgba(16, 185, 129, 0.1)' : 
+                r.status === 'failed' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)'
+              }; color: ${
+                r.status === 'completed' ? 'rgb(16, 185, 129)' : 
+                r.status === 'failed' ? 'rgb(239, 68, 68)' : 'rgb(245, 158, 11)'
+              }">
+                ${r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+              </span>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // 5. Setup Logout
+      document.querySelectorAll('.logout-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await window.authBackend.signOut();
+        });
+      });
     });
   </script>
+
+  
+
+  <!-- Supabase Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/subscription-backend.js"></script>
+  <script src="../assets/js/upload-backend.js"></script>
+  <script src="../assets/js/reports-backend.js"></script>
+  <script src="../assets/js/profile-backend.js"></script>
+  <script src="../assets/js/contact-support-backend.js"></script>
+  <script src="../assets/js/admin-backend.js"></script>
 </body>
 </html>
 

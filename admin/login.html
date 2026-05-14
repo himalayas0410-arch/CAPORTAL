@@ -46,19 +46,50 @@
   </div>
 
   <script>
-    document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('email').value;
-      const pass = document.getElementById('password').value;
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
 
-      if (email === 'admin@gstinportal.com' && pass === 'admin123') {
-        localStorage.setItem('session', JSON.stringify({ role: 'admin', name: 'Admin User' }));
-        window.location.href = 'dashboard.html';
+      const btn = e.target.querySelector('button');
+      const originalText = btn.innerText;
+      btn.innerText = 'Verifying...';
+      btn.disabled = true;
+
+      const user = await window.authBackend.signIn(email, password);
+      
+      if (user) {
+        const profile = await window.profileBackend.getProfile();
+        if (profile && profile.role === 'admin') {
+          window.showToast('Admin access granted!', 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          window.showToast('Unauthorized. Admin role required.', 'error');
+          await window.authBackend.signOut();
+          btn.innerText = originalText;
+          btn.disabled = false;
+        }
       } else {
-        alert('Invalid admin credentials.');
+        btn.innerText = originalText;
+        btn.disabled = false;
       }
     });
   </script>
+
+  
+
+  <!-- Supabase Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/subscription-backend.js"></script>
+  <script src="../assets/js/upload-backend.js"></script>
+  <script src="../assets/js/reports-backend.js"></script>
+  <script src="../assets/js/profile-backend.js"></script>
+  <script src="../assets/js/contact-support-backend.js"></script>
+  <script src="../assets/js/admin-backend.js"></script>
 </body>
 </html>
 

@@ -100,57 +100,98 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Protect Page
+      const user = await window.authBackend.protectPage();
+      if (!user) return;
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const uploadId = urlParams.get('id');
+
+      if (!uploadId) {
+        window.location.href = 'upload.html';
+        return;
+      }
+
       const bar = document.getElementById('progressBar');
       const text = document.getElementById('progressText');
       const record = document.getElementById('recordText');
       const log = document.getElementById('log');
       const actions = document.getElementById('completionActions');
-      
-      let progress = 0;
-      const total = 250;
-      
-      const messages = [
-        "Connecting to GSTN gateway...",
-        "Validating GSTIN formats...",
-        "Fetching status for batch 1...",
-        "Batch 1 processed. 50 records verified.",
-        "Fetching status for batch 2...",
-        "Batch 2 processed. 100 records verified.",
-        "Fetching status for batch 3...",
-        "Batch 3 processed. 150 records verified.",
-        "Fetching status for batch 4...",
-        "Batch 4 processed. 200 records verified.",
-        "Finalizing report generation...",
-        "Verification complete!"
-      ];
-      
-      let msgIndex = 0;
+      const reportLink = actions.querySelector('a');
 
-      const interval = setInterval(() => {
-        progress += 1;
-        bar.style.width = progress + '%';
-        text.innerText = progress + '% Completed';
-        record.innerText = Math.floor((progress / 100) * total) + ' / ' + total + ' records';
-        
-        if (progress % 8 === 0 && msgIndex < messages.length) {
-          const item = document.createElement('div');
-          item.className = 'log-item' + (msgIndex === messages.length - 1 ? ' success' : '');
-          item.innerText = '> ' + messages[msgIndex];
-          log.appendChild(item);
-          log.scrollTop = log.scrollHeight;
-          msgIndex++;
+      let isCompleted = false;
+
+      const addLog = (message, type = '') => {
+        const item = document.createElement('div');
+        item.className = 'log-item ' + type;
+        item.innerText = '> ' + message;
+        log.appendChild(item);
+        log.scrollTop = log.scrollHeight;
+      };
+
+      const pollStatus = async () => {
+        const data = await window.uploadBackend.getUploadStatus(uploadId);
+        if (!data) return;
+
+        const total = data.total_records || 0;
+        const processed = data.processed_records || 0;
+        const percentage = total > 0 ? Math.round((processed / total) * 100) : 0;
+
+        bar.style.width = percentage + '%';
+        text.innerText = percentage + '% Completed';
+        record.innerText = `${processed} / ${total} records`;
+
+        if (data.status === 'processing' && !isCompleted) {
+            addLog(`Processing: ${processed} records verified...`);
         }
 
-        if (progress >= 100) {
-          clearInterval(interval);
+        if (data.status === 'completed' && !isCompleted) {
+          isCompleted = true;
+          bar.style.width = '100%';
           text.innerText = '100% Completed';
-          record.innerText = '250 / 250 records';
+          record.innerText = `${total} / ${total} records`;
+          addLog('Verification complete!', 'success');
+          addLog(`Results: ${data.active_count} Active, ${data.cancelled_count} Cancelled, ${data.invalid_count} Invalid`);
+          
+          reportLink.href = `report-detail.html?id=${uploadId}`;
           actions.classList.remove('hidden');
+          clearInterval(pollingInterval);
         }
-      }, 50);
+
+        if (data.status === 'failed') {
+          addLog('Verification failed. Please try again.', 'destructive');
+          clearInterval(pollingInterval);
+        }
+      };
+
+      addLog('Connecting to backend...');
+      addLog('Fetching upload details...');
+      
+      const pollingInterval = setInterval(pollStatus, 2000);
+      pollStatus(); // Initial call
+
+      // Logout
+      document.querySelectorAll('.logout-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await window.authBackend.signOut();
+        });
+      });
     });
   </script>
+
+  
+
+  <!-- Supabase Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/subscription-backend.js"></script>
+  <script src="../assets/js/upload-backend.js"></script>
+  <script src="../assets/js/reports-backend.js"></script>
+  <script src="../assets/js/profile-backend.js"></script>
+  <script src="../assets/js/contact-support-backend.js"></script>
+  <script src="../assets/js/admin-backend.js"></script>
 </body>
 </html>
 

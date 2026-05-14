@@ -130,31 +130,73 @@
 
   <script src="../assets/js/mock-data.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('totalSubscribers').innerText = ADMIN_STATS.totalSubscribers;
-      document.getElementById('activeSubscribers').innerText = ADMIN_STATS.activeSubscriptions;
-      document.getElementById('totalRevenue').innerText = ADMIN_STATS.totalRevenue;
-      document.getElementById('totalGstin').innerText = '184,350';
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Protect Admin Page
+      const user = await window.authBackend.protectPage('admin');
+      if (!user) return;
 
+      // 2. Load Stats
+      const stats = await window.adminBackend.getStats();
+      
+      document.getElementById('totalSubscribers').innerText = stats.totalSubscribers;
+      document.getElementById('activeSubscribers').innerText = stats.activeSubscribers;
+      document.getElementById('totalRevenue').innerText = '₹' + stats.totalRevenue.toLocaleString();
+      document.getElementById('totalGstin').innerText = stats.totalGstin.toLocaleString();
+
+      // 3. Load Recent Subscribers
+      const subscribers = await window.adminBackend.getSubscribers(1, 5);
       const subscribersBody = document.getElementById('recentSubscribers');
-      subscribersBody.innerHTML = MOCK_SUBSCRIBERS.slice(0, 5).map(s => `
-        <tr class="border-t border-slate-50">
-          <td class="py-2">${s.name}</td>
-          <td class="py-2 text-muted-foreground">${s.company}</td>
-          <td class="py-2 text-right">${s.plan}</td>
-        </tr>
-      `).join('');
+      
+      if (subscribers.length === 0) {
+        subscribersBody.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-muted-foreground">No subscribers yet</td></tr>';
+      } else {
+        subscribersBody.innerHTML = subscribers.map(s => `
+          <tr class="border-t border-slate-50">
+            <td class="py-2">${s.full_name || 'No Name'}</td>
+            <td class="py-2 text-muted-foreground">${s.company_name || 'N/A'}</td>
+            <td class="py-2 text-right">${s.role === 'admin' ? 'Admin' : 'User'}</td>
+          </tr>
+        `).join('');
+      }
 
+      // 4. Load Recent Payments
+      const payments = await window.adminBackend.getPayments(1, 5);
       const paymentsBody = document.getElementById('recentPayments');
-      paymentsBody.innerHTML = MOCK_PAYMENTS.slice(0, 5).map(p => `
-        <tr class="border-t border-slate-50">
-          <td class="py-2 font-mono text-xs">${p.receipt.split('-').pop()}</td>
-          <td class="py-2">${p.amount}</td>
-          <td class="py-2 text-right text-success">${p.status}</td>
-        </tr>
-      `).join('');
+      
+      if (payments.length === 0) {
+        paymentsBody.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-muted-foreground">No payments yet</td></tr>';
+      } else {
+        paymentsBody.innerHTML = payments.map(p => `
+          <tr class="border-t border-slate-50">
+            <td class="py-2 font-mono text-xs">${p.id.substring(0, 8)}...</td>
+            <td class="py-2">₹${p.amount.toLocaleString()}</td>
+            <td class="py-2 text-right text-success">${p.status}</td>
+          </tr>
+        `).join('');
+      }
+
+      // 5. Logout
+      document.querySelectorAll('.admin-nav-link[href="../index.html"]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          await window.authBackend.signOut();
+        });
+      });
     });
   </script>
+
+  
+
+  <!-- Supabase Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/subscription-backend.js"></script>
+  <script src="../assets/js/upload-backend.js"></script>
+  <script src="../assets/js/reports-backend.js"></script>
+  <script src="../assets/js/profile-backend.js"></script>
+  <script src="../assets/js/contact-support-backend.js"></script>
+  <script src="../assets/js/admin-backend.js"></script>
 </body>
 </html>
 

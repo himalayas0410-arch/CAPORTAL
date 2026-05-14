@@ -146,31 +146,56 @@
   <script src="../assets/js/mock-data.js"></script>
   <script src="../assets/js/dashboard.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const reportId = urlParams.get('id') || 'RPT-1001';
-      const report = MOCK_REPORTS.find(r => r.id === reportId) || MOCK_REPORTS[0];
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Protect Page
+      const user = await window.authBackend.protectPage();
+      if (!user) return;
 
-      document.getElementById('reportIdHeader').innerText = 'Report ' + report.id;
-      document.getElementById('reportIdTitle').innerText = report.id;
-      document.getElementById('reportSubTitle').innerText = report.fileName + ' · ' + report.date;
+      const urlParams = new URLSearchParams(window.location.search);
+      const reportId = urlParams.get('id');
+
+      if (!reportId) {
+        window.location.href = 'reports.html';
+        return;
+      }
+
+      const reportData = await window.reportsBackend.getReportDetails(reportId);
+      if (!reportData) {
+        window.location.href = 'reports.html';
+        return;
+      }
+
+      const upload = reportData.upload;
+      const results = reportData.results;
+
+      document.getElementById('reportIdHeader').innerText = 'Report ' + upload.id.substring(0, 8);
+      document.getElementById('reportIdTitle').innerText = upload.id.substring(0, 8);
+      document.getElementById('reportSubTitle').innerText = upload.file_name + ' · ' + new Date(upload.created_at).toLocaleDateString();
       
-      document.getElementById('statTotal').innerText = report.total;
-      document.getElementById('statActive').innerText = report.active;
-      document.getElementById('statInvalid').innerText = report.cancelled + report.invalid;
-      document.getElementById('statFailed').innerText = Math.max(0, report.total - report.active - report.cancelled - report.invalid);
+      document.getElementById('statTotal').innerText = upload.total_records || 0;
+      document.getElementById('statActive').innerText = upload.active_count || 0;
+      document.getElementById('statInvalid').innerText = (upload.cancelled_count || 0) + (upload.invalid_count || 0);
+      document.getElementById('statFailed').innerText = (upload.total_records || 0) - (upload.processed_records || 0);
 
       const tbody = document.getElementById('resultsTableBody');
       const searchInput = document.getElementById('searchInput');
       const filterBtns = document.querySelectorAll('.filter-btn');
+      const downloadBtn = document.querySelector('.btn-primary');
+
+      downloadBtn.addEventListener('click', () => {
+        window.reportsBackend.downloadCSV(results, `report-${upload.id.substring(0,8)}.csv`);
+      });
       
       let currentFilter = 'All';
       let searchQuery = '';
 
       function renderTable() {
-        const filtered = MOCK_GSTIN_RESULTS.filter(r => {
+        const filtered = results.filter(r => {
           const matchesFilter = currentFilter === 'All' || r.status === currentFilter;
-          const matchesSearch = !searchQuery || r.gstin.toLowerCase().includes(searchQuery) || r.legalName.toLowerCase().includes(searchQuery);
+          const matchesSearch = !searchQuery || 
+                               r.gstin.toLowerCase().includes(searchQuery) || 
+                               (r.legal_name && r.legal_name.toLowerCase().includes(searchQuery)) ||
+                               (r.trade_name && r.trade_name.toLowerCase().includes(searchQuery));
           return matchesFilter && matchesSearch;
         });
 
@@ -179,27 +204,27 @@
           return;
         }
 
-        tbody.innerHTML = filtered.map(r => `
+        tbody.innerHTML = filtered.map((r, index) => `
           <tr class="border-t border-border">
-            <td class="px-5 py-3 text-muted-foreground">${r.sr}</td>
+            <td class="px-5 py-3 text-muted-foreground">${index + 1}</td>
             <td class="px-5 py-3 font-mono text-xs">${r.gstin}</td>
-            <td class="px-5 py-3">${r.legalName}</td>
-            <td class="px-5 py-3">${r.tradeName}</td>
+            <td class="px-5 py-3">${r.legal_name || '--'}</td>
+            <td class="px-5 py-3">${r.trade_name || '--'}</td>
             <td class="px-5 py-3">
-              <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                r.status === 'Active' ? 'bg-success text-success' : 
-                r.status === 'Cancelled' ? 'bg-warning text-warning' : 
-                r.status === 'Invalid' ? 'bg-destructive text-destructive' : 'bg-warning text-warning'
-              }" style="background-color: ${
+              <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium" style="background-color: ${
                 r.status === 'Active' ? 'rgba(16, 185, 129, 0.1)' : 
                 r.status === 'Cancelled' ? 'rgba(245, 158, 11, 0.1)' : 
                 r.status === 'Invalid' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)'
+              }; color: ${
+                r.status === 'Active' ? 'rgb(16, 185, 129)' : 
+                r.status === 'Cancelled' ? 'rgb(245, 158, 11)' : 
+                r.status === 'Invalid' ? 'rgb(239, 68, 68)' : 'rgb(245, 158, 11)'
               }">
                 ${r.status}
               </span>
             </td>
-            <td class="px-5 py-3 text-muted-foreground">${r.state}</td>
-            <td class="px-5 py-3 text-muted-foreground">${r.remarks}</td>
+            <td class="px-5 py-3 text-muted-foreground">${r.state || '--'}</td>
+            <td class="px-5 py-3 text-muted-foreground">${r.remarks || '--'}</td>
           </tr>
         `).join('');
       }
@@ -219,8 +244,28 @@
       });
 
       renderTable();
+
+      // Logout
+      document.querySelectorAll('.logout-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await window.authBackend.signOut();
+        });
+      });
     });
   </script>
+
+  
+
+  <!-- Supabase Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/subscription-backend.js"></script>
+  <script src="../assets/js/upload-backend.js"></script>
+  <script src="../assets/js/reports-backend.js"></script>
+  <script src="../assets/js/profile-backend.js"></script>
+  <script src="../assets/js/contact-support-backend.js"></script>
+  <script src="../assets/js/admin-backend.js"></script>
 </body>
 </html>
 

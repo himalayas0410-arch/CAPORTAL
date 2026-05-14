@@ -124,7 +124,11 @@
 
   <script src="../assets/js/dashboard.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Protect Page
+      const user = await window.authBackend.protectPage();
+      if (!user) return;
+
       const dropZone = document.getElementById('dropZone');
       const fileInput = document.getElementById('fileInput');
       const filePreview = document.getElementById('filePreview');
@@ -133,33 +137,59 @@
       const removeFile = document.getElementById('removeFile');
       const processBtn = document.getElementById('processBtn');
 
+      let selectedFile = null;
+
       dropZone.addEventListener('click', () => fileInput.click());
 
       fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
-          showFile(e.target.files[0]);
+          selectedFile = e.target.files[0];
+          showFile(selectedFile);
         }
       });
 
       function showFile(file) {
         fileName.innerText = file.name;
-        fileInfo.innerText = `${(file.size / 1024).toFixed(1)} KB • Detecting records...`;
+        fileInfo.innerText = `${(file.size / 1024).toFixed(1)} KB • Ready for processing`;
         filePreview.classList.remove('hidden');
         processBtn.disabled = false;
-        
-        setTimeout(() => {
-          fileInfo.innerText = `${(file.size / 1024).toFixed(1)} KB • 250 records detected`;
-        }, 1000);
       }
 
       removeFile.addEventListener('click', () => {
         fileInput.value = '';
+        selectedFile = null;
         filePreview.classList.add('hidden');
         processBtn.disabled = true;
       });
 
-      processBtn.addEventListener('click', () => {
-        window.location.href = 'processing.html';
+      processBtn.addEventListener('click', async () => {
+        if (!selectedFile) return;
+
+        const originalText = processBtn.innerText;
+        processBtn.innerText = 'Uploading...';
+        processBtn.disabled = true;
+
+        const uploadData = await window.uploadBackend.uploadFile(selectedFile);
+        
+        if (uploadData) {
+          processBtn.innerText = 'Initializing Processing...';
+          const trigger = await window.uploadBackend.triggerProcessing(uploadData.id);
+          
+          if (trigger) {
+            window.showToast('Upload successful! Processing started.', 'success');
+            setTimeout(() => {
+              window.location.href = `processing.html?id=${uploadData.id}`;
+            }, 1000);
+          } else {
+             // Even if trigger fails, the file is uploaded. Maybe show a link to reports.
+             window.showToast('Processing initialization failed. Please try again from Reports.', 'error');
+             processBtn.innerText = originalText;
+             processBtn.disabled = false;
+          }
+        } else {
+          processBtn.innerText = originalText;
+          processBtn.disabled = false;
+        }
       });
 
       // Drag and Drop
@@ -184,12 +214,33 @@
         const dt = e.dataTransfer;
         const files = dt.files;
         if (files.length > 0) {
+          selectedFile = files[0];
           fileInput.files = files;
-          showFile(files[0]);
+          showFile(selectedFile);
         }
+      });
+
+      // Logout
+      document.querySelectorAll('.logout-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await window.authBackend.signOut();
+        });
       });
     });
   </script>
+
+  
+
+  <!-- Supabase Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/subscription-backend.js"></script>
+  <script src="../assets/js/upload-backend.js"></script>
+  <script src="../assets/js/reports-backend.js"></script>
+  <script src="../assets/js/profile-backend.js"></script>
+  <script src="../assets/js/contact-support-backend.js"></script>
+  <script src="../assets/js/admin-backend.js"></script>
 </body>
 </html>
 

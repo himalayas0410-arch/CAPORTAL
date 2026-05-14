@@ -168,11 +168,51 @@
 
   <script src="assets/js/main.js"></script>
   <script>
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      // Mock flow - redirect to checkout
-      window.location.href = 'checkout.html';
+      const name = document.getElementById('name').value.trim();
+      const company = document.getElementById('company').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const mobile = document.getElementById('mobile').value.trim();
+      const gstin = document.getElementById('gstin').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (password !== confirmPassword) {
+        window.showToast('Passwords do not match!', 'error');
+        return;
+      }
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalText = btn.innerText;
+      btn.innerText = 'Creating account...';
+      btn.disabled = true;
+
+      const data = await window.authBackend.signUp(email, password, name, company, mobile, gstin);
+
+      if (data) {
+        window.showToast('Registration successful! Redirecting to checkout...', 'success');
+        setTimeout(() => {
+          window.location.href = 'checkout.html';
+        }, 1500);
+      } else {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
     });
   </script>
+
+  
+
+  <!-- Supabase Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/subscription-backend.js"></script>
+  <script src="assets/js/upload-backend.js"></script>
+  <script src="assets/js/reports-backend.js"></script>
+  <script src="assets/js/profile-backend.js"></script>
+  <script src="assets/js/contact-support-backend.js"></script>
+  <script src="assets/js/admin-backend.js"></script>
 </body>
 </html>
