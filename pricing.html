@@ -227,7 +227,7 @@
         }
       } catch (err) {
         console.error('Error loading full pricing:', err);
-        grid.innerHTML = '<div class="col-span-full text-center py-10">Pricing temporarily unavailable.</div>';
+        grid.innerHTML = `<div class="col-span-full text-center py-10">Pricing temporarily unavailable. <br><span class="text-xs opacity-50">${err.message || 'Unknown error'}</span></div>`;
       }
     });
   </script>

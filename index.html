@@ -466,11 +466,9 @@
         }
       } catch (err) {
         console.error('Error loading pricing teaser:', err);
-        container.innerHTML = '<div class="col-span-full text-center py-10">Pricing temporarily unavailable.</div>';
+        container.innerHTML = `<div class="col-span-full text-center py-10">Pricing temporarily unavailable. <br><span class="text-xs opacity-50">${err.message || 'Unknown error'}</span></div>`;
       }
     });
   </script>
 </body>
-</html>
-
 
