@@ -33,8 +33,8 @@ const auth = {
 
             if (error) throw error;
             
-            // Create user session record
-            await this.createUserSession(data.user.id, data.session.access_token);
+            // Create user session record (non-blocking)
+            this.createUserSession(data.user.id, data.session.access_token);
             
             return data;
         } catch (error) {
@@ -93,12 +93,19 @@ const auth = {
     },
 
     async protectPage() {
+        console.log('Running protectPage check...');
         const user = await this.getCurrentUser();
+        
         if (!user) {
+            console.warn('protectPage: No user session found. Redirecting...');
             const path = window.location.pathname;
             const redirectUrl = (path.includes('/dashboard/') || path.includes('/admin/')) ? '../login.html' : 'login.html';
+            console.log('Redirecting to:', redirectUrl);
             window.location.href = redirectUrl;
+            return null;
         }
+        
+        console.log('protectPage: User session valid:', user.email);
         return user;
     },
 
