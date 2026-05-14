@@ -311,7 +311,8 @@ aside.sidebar {
   display: flex;
   flex-direction: column;
   position: fixed;
-  inset-y: 0;
+  top: 0;
+  bottom: 0;
   left: 0;
   z-index: 40;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -401,7 +402,8 @@ aside.admin-sidebar {
   display: flex;
   flex-direction: column;
   position: fixed;
-  inset-y: 0;
+  top: 0;
+  bottom: 0;
   left: 0;
   z-index: 40;
 }
@@ -692,9 +694,9 @@ aside.admin-sidebar {
 .bg-slate-50 { background-color: #f8fafc; }
 .bg-slate-200 { background-color: #e2e8f0; }
 .bg-slate-900 { background-color: #0f172a; }
-.bg-success\\/10 { background-color: rgba(16, 185, 129, 0.1); }
-.bg-destructive\\/10 { background-color: rgba(239, 68, 68, 0.1); }
-.bg-warning\\/10 { background-color: rgba(245, 158, 11, 0.1); }
+.bg-success\/10 { background-color: rgba(16, 185, 129, 0.1); }
+.bg-destructive\/10 { background-color: rgba(239, 68, 68, 0.1); }
+.bg-warning\/10 { background-color: rgba(245, 158, 11, 0.1); }
 
 /* ===== BORDERS ===== */
 .border-r { border-right: 1px solid var(--border); }
@@ -703,7 +705,7 @@ aside.admin-sidebar {
 .border-slate-800 { border-color: #1e293b; }
 .ring-1 { box-shadow: 0 0 0 1px; }
 .ring-primary { --tw-ring-color: var(--primary); }
-.ring-primary\\/20 { box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2); }
+.ring-primary\/20 { box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2); }
 .rounded-2xl { border-radius: calc(var(--radius) + 8px); }
 
 /* ===== FLEXBOX / GRID EXTRAS ===== */

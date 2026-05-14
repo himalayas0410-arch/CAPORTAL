@@ -9,8 +9,8 @@
 </head>
 <body>
   <div class="dashboard-container">
-    <aside id="sidebar" class="sidebar">
-       <!-- Same sidebar -->
+    <div id="sidebarOverlay" class="sidebar-overlay hidden lg:hidden"></div>
+    <aside id="sidebar" class="sidebar -translate-x-full lg:translate-x-0">
        <div class="flex h-16 items-center border-b px-5">
         <a href="../index.html" class="flex items-center gap-2">
           <div class="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
@@ -20,14 +20,41 @@
         </a>
       </div>
       <nav class="flex-1 overflow-y-auto p-3">
-        <a href="index.html" class="nav-link">Dashboard</a>
-        <a href="upload.html" class="nav-link">Upload GSTIN Excel</a>
-        <a href="reports.html" class="nav-link">Reports</a>
-        <a href="subscription.html" class="nav-link">Subscription</a>
-        <a href="payment-history.html" class="nav-link">Payment History</a>
-        <a href="profile.html" class="nav-link">Profile</a>
-        <a href="support.html" class="nav-link active">Help / Support</a>
+        <a href="index.html" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          Dashboard
+        </a>
+        <a href="upload.html" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+          Upload GSTIN Excel
+        </a>
+        <a href="reports.html" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Reports
+        </a>
+        <a href="subscription.html" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          Subscription
+        </a>
+        <a href="payment-history.html" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"/><path d="M16 8h-6"/><path d="M16 12h-9"/><path d="M10 16h-3"/></svg>
+          Payment History
+        </a>
+        <a href="profile.html" class="nav-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </a>
+        <a href="support.html" class="nav-link active">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+          Help / Support
+        </a>
       </nav>
+      <div class="border-t p-3">
+        <button class="logout-btn nav-link w-full border-none bg-transparent cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+          Logout
+        </button>
+      </div>
     </aside>
 
     <div class="main-content">
