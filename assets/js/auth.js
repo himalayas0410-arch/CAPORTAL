@@ -92,18 +92,35 @@ const auth = {
     },
 
     async protectAdminPage() {
+        console.log('Protecting Admin Page...');
         const user = await this.protectPage();
         if (user) {
+            console.log('User authenticated, checking role for user:', user.id);
             const { data: profile, error } = await window.supabaseClient
                 .from('profiles')
                 .select('role')
                 .eq('id', user.id)
                 .single();
             
-            if (error || profile.role !== 'admin') {
-                window.location.href = 'index.html';
+            if (error) {
+                console.error('Error fetching admin profile:', error);
             }
+
+            if (profile) {
+                console.log('User role:', profile.role);
+            }
+
+            if (error || !profile || profile.role !== 'admin') {
+                console.warn('Unauthorized admin access. Redirecting...');
+                const path = window.location.pathname;
+                const redirectUrl = (path.includes('/dashboard/') || path.includes('/admin/')) ? '../index.html' : 'index.html';
+                window.location.href = redirectUrl;
+                return null;
+            }
+        } else {
+            console.warn('No user session found in protectAdminPage');
         }
+        return user;
     }
 };
 

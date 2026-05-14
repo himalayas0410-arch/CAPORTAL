@@ -132,7 +132,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Protect Admin Page
-      const user = await window.authBackend.protectPage('admin');
+      const user = await window.authBackend.protectAdminPage();
       if (!user) return;
 
       // 2. Load Stats
