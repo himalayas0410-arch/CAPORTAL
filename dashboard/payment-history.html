@@ -96,24 +96,49 @@
   <script src="../assets/js/mock-data.js"></script>
   <script src="../assets/js/dashboard.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Protect Page
+      const user = await window.authBackend.protectPage();
+      if (!user) return;
+
+      // 2. Load Payments
+      const payments = await window.subscriptionBackend.getPaymentHistory(user.id);
       const tbody = document.getElementById('paymentsTableBody');
-      tbody.innerHTML = MOCK_PAYMENTS.map(p => `
-        <tr class="border-t border-border">
-          <td class="px-5 py-3 font-mono text-xs text-primary">${p.receipt}</td>
-          <td class="px-5 py-3">${p.date}</td>
-          <td class="px-5 py-3 text-muted-foreground">${p.plan}</td>
-          <td class="px-5 py-3 text-right font-medium">${p.amount}</td>
-          <td class="px-5 py-3">
-             <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-success text-success" style="background-color: rgba(16, 185, 129, 0.1);">
-              ${p.status}
-            </span>
-          </td>
-          <td class="px-5 py-3 text-right">
-            <button onclick="alert('Receipt download will be available after backend integration')" class="btn btn-ghost btn-sm">Download</button>
-          </td>
-        </tr>
-      `).join('');
+      
+      if (payments.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-8 text-center text-muted-foreground">No payment history found.</td></tr>';
+      } else {
+        tbody.innerHTML = payments.map(p => {
+          const date = new Date(p.payment_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+          const planName = p.subscription_plans?.name || 'Subscription';
+          
+          return `
+            <tr class="border-t border-border">
+              <td class="px-5 py-3 font-mono text-xs text-primary">${p.receipt_no}</td>
+              <td class="px-5 py-3 text-muted-foreground">${date}</td>
+              <td class="px-5 py-3 font-medium">${planName}</td>
+              <td class="px-5 py-3 text-right font-medium">₹${p.amount.toLocaleString()}</td>
+              <td class="px-5 py-3">
+                 <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                   p.payment_status === 'success' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+                 }">
+                  ${p.payment_status === 'success' ? 'Paid' : p.payment_status}
+                </span>
+              </td>
+              <td class="px-5 py-3 text-right">
+                <button onclick="window.print()" class="btn btn-ghost btn-sm">Print</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Logout
+      document.querySelectorAll('.logout-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await window.authBackend.signOut();
+        });
+      });
     });
   </script>
 

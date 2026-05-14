@@ -75,36 +75,36 @@
                 <div class="flex items-start justify-between">
                   <div>
                     <p class="text-xs uppercase tracking-wider text-muted-foreground">Current Plan</p>
-                    <h2 class="mt-1 font-serif text-3xl font-bold">Professional</h2>
-                    <p class="mt-1 text-sm text-success font-medium">Active • Expires on 13 May 2027</p>
+                    <h2 id="currentPlanName" class="mt-1 font-serif text-3xl font-bold">Loading...</h2>
+                    <p id="currentPlanStatus" class="mt-1 text-sm text-success font-medium">Checking status...</p>
                   </div>
-                  <div class="rounded-lg bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Annual Plan</div>
+                  <div id="planTag" class="rounded-lg bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Annual Plan</div>
                 </div>
                 
                 <div class="mt-8 grid gap-6 sm:grid-cols-2">
                   <div>
                     <p class="text-xs text-muted-foreground mb-2">Simultaneous Users</p>
                     <div class="flex items-center gap-2">
-                       <span class="text-lg font-bold">1 / 2</span>
+                       <span id="userUsageLabel" class="text-lg font-bold">0 / 0</span>
                        <div class="flex-1 h-2 bg-surface rounded-full overflow-hidden">
-                         <div class="bg-primary h-full" style="width: 50%;"></div>
+                         <div id="userUsageBar" class="bg-primary h-full" style="width: 0%;"></div>
                        </div>
                     </div>
                   </div>
                   <div>
                     <p class="text-xs text-muted-foreground mb-2">Monthly Verification Limit</p>
                     <div class="flex items-center gap-2">
-                       <span class="text-lg font-bold">4,850 / 25,000</span>
+                       <span id="verificationUsageLabel" class="text-lg font-bold">0 / 0</span>
                        <div class="flex-1 h-2 bg-surface rounded-full overflow-hidden">
-                         <div class="bg-primary h-full" style="width: 20%;"></div>
+                         <div id="verificationUsageBar" class="bg-primary h-full" style="width: 0%;"></div>
                        </div>
                     </div>
                   </div>
                 </div>
 
                 <div class="mt-8 pt-6 border-t flex gap-3">
-                   <button onclick="alert('Upgrade flow will be connected soon')" class="btn btn-primary">Upgrade Plan</button>
-                   <button onclick="alert('Renewal available 30 days before expiry')" class="btn btn-outline" disabled>Renew Early</button>
+                   <a href="../pricing.html" class="btn btn-primary">Upgrade Plan</a>
+                   <button id="renewEarlyBtn" class="btn btn-outline" disabled>Renew Early</button>
                 </div>
               </div>
 
@@ -146,55 +146,60 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      // 1. Protect Page
+      // 1. Protect Page & Get Session
       const user = await window.authBackend.protectPage();
       if (!user) return;
 
       // 2. Load Subscription
       const sub = await window.subscriptionBackend.getUserSubscription(user.id);
       
-      const planNameEl = document.querySelector('h2.font-serif');
-      const planStatusEl = document.querySelector('.text-success');
-      const planTypeEl = document.querySelector('.bg-primary/10');
-      const usageLimitEl = document.querySelector('.grid.sm\\:grid-cols-2 .text-lg.font-bold:nth-of-type(1)'); // This selector is tricky
-      // Let's use IDs instead if possible, but I can't modify the HTML structure too much.
-      // I'll target by text content for now or find a better way.
+      const planNameEl = document.getElementById('currentPlanName');
+      const planStatusEl = document.getElementById('currentPlanStatus');
+      const planTagEl = document.getElementById('planTag');
 
       if (sub) {
         const plan = sub.subscription_plans;
         planNameEl.innerText = plan.name;
         
         const endDate = new Date(sub.end_date);
-        const status = sub.status === 'active' ? 'Active' : 'Inactive';
-        planStatusEl.innerText = `${status} • Expires on ${endDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-        planStatusEl.className = `mt-1 text-sm font-medium ${sub.status === 'active' ? 'text-success' : 'text-destructive'}`;
+        const isActive = sub.status === 'active';
+        planStatusEl.innerText = `${isActive ? 'Active' : 'Expired'} • Expires on ${endDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+        planStatusEl.className = `mt-1 text-sm font-medium ${isActive ? 'text-success' : 'text-destructive'}`;
         
-        planTypeEl.innerText = 'Active Plan';
+        planTagEl.innerText = 'Active Plan';
 
-        // Update Usage (Mocked usage calculation for now)
+        // 3. Update Usage Stats
         const uploads = await window.reportsBackend.getUserUploads();
-        const totalChecked = uploads.reduce((acc, curr) => acc + (curr.processed_records || 0), 0);
+        const totalChecked = uploads
+          .filter(u => u.status === 'completed')
+          .reduce((sum, u) => sum + (u.total_records || 0), 0);
         
-        // Find usage indicators
-        const indicators = document.querySelectorAll('.text-lg.font-bold');
-        if (indicators.length >= 2) {
-          // Simultaneous users (just hardcoding 1 for now)
-          indicators[0].innerText = `1 / 1`; 
-          
-          // Verification Limit
-          indicators[1].innerText = `${totalChecked.toLocaleString()} / ${plan.limit_per_month.toLocaleString()}`;
-          const progressBars = document.querySelectorAll('.bg-primary.h-full');
-          if (progressBars.length >= 2) {
-              progressBars[0].style.width = '100%';
-              const limitPerc = Math.min(100, (totalChecked / plan.limit_per_month) * 100);
-              progressBars[1].style.width = `${limitPerc}%`;
-          }
+        // Simultaneous users (Hardcoded 1 for now as we don't have multi-login tracking yet)
+        const maxUsers = sub.max_simultaneous_users || plan.max_simultaneous_users || 1;
+        document.getElementById('userUsageLabel').innerText = `1 / ${maxUsers}`;
+        document.getElementById('userUsageBar').style.width = `${(1 / maxUsers) * 100}%`;
+
+        // Verification Limit
+        // Note: The schema has validity_days, but let's assume a limit from features or default
+        const limit = plan.features?.limit || 25000; // Fallback to 25k if not in features
+        document.getElementById('verificationUsageLabel').innerText = `${totalChecked.toLocaleString()} / ${limit.toLocaleString()}`;
+        const limitPerc = Math.min(100, (totalChecked / limit) * 100);
+        document.getElementById('verificationUsageBar').style.width = `${limitPerc}%`;
+        
+        // Enable renewal if close to expiry (within 30 days)
+        const daysToExpiry = Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24));
+        if (daysToExpiry <= 30) {
+          const renewBtn = document.getElementById('renewEarlyBtn');
+          renewBtn.disabled = false;
+          renewBtn.onclick = () => window.location.href = `../checkout.html?plan=${plan.slug}`;
         }
       } else {
-        planNameEl.innerText = 'No Plan';
-        planStatusEl.innerText = 'Inactive • Subscribe to get started';
+        planNameEl.innerText = 'No Active Plan';
+        planStatusEl.innerText = 'Subscribe to start verification';
         planStatusEl.className = 'mt-1 text-sm font-medium text-destructive';
-        planTypeEl.innerText = 'Inactive';
+        planTagEl.innerText = 'Inactive';
+        document.getElementById('userUsageLabel').innerText = '0 / 0';
+        document.getElementById('verificationUsageLabel').innerText = '0 / 0';
       }
 
       // Logout

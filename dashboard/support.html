@@ -130,10 +130,57 @@
     </div>
   </div>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Protect Page
+      const user = await window.authBackend.protectPage();
+      if (!user) return;
+
+      // 2. Handle Form Submission
+      const supportForm = document.getElementById('supportForm');
+      if (supportForm) {
+        supportForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const subject = supportForm.querySelector('select').value;
+          const message = supportForm.querySelector('textarea').value;
+          
+          const submitBtn = supportForm.querySelector('button[type="submit"]');
+          const originalBtnText = submitBtn.innerText;
+          
+          try {
+            submitBtn.innerText = 'Sending...';
+            submitBtn.disabled = true;
+            
+            const ticket = await window.contactSupportBackend.createTicket({
+              subject,
+              message
+            });
+            
+            if (ticket) {
+              window.showToast('Your message has been sent. We will get back to you soon.', 'success');
+              supportForm.reset();
+            }
+          } catch (error) {
+            window.showToast('Failed to send message. Please try again.', 'error');
+          } finally {
+            submitBtn.innerText = originalBtnText;
+            submitBtn.disabled = false;
+          }
+        });
+      }
+
+      // Logout
+      document.querySelectorAll('.logout-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await window.authBackend.signOut();
+        });
+      });
+    });
+  </script>
+
   <script src="../assets/js/dashboard.js"></script>
-
   
-
   <!-- Supabase Integration -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-client.js"></script>
