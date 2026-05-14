@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — GSTverify</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+  <div class="auth-shell">
+    <header class="auth-header">
+      <div class="mx-auto flex w-full max-w-7xl items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2">
+          <div class="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <span class="font-serif text-lg font-bold">GSTverify</span>
+        </a>
+        <a href="index.html" class="text-sm text-muted-foreground hover:text-foreground">← Back to site</a>
+      </div>
+    </header>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <div class="mb-6">
+          <h1 class="text-3xl font-bold">Login</h1>
+          <p class="mt-2 text-sm text-muted-foreground">Welcome back. Sign in to access your dashboard.</p>
+        </div>
+
+        <div class="card shadow-soft">
+          <div class="mock-banner">
+            <strong>Mock Mode:</strong> This is a frontend-only demo.
+          </div>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="email">Email or mobile</label>
+              <input type="email" id="email" class="form-control" placeholder="demo@gstinportal.com" required>
+            </div>
+            <div class="form-group">
+              <div class="flex items-center justify-between">
+                <label for="password">Password</label>
+                <a href="forgot-password.html" class="text-xs text-primary hover:underline">Forgot password?</a>
+              </div>
+              <input type="password" id="password" class="form-control" placeholder="••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-full btn-lg">Sign in</button>
+          </form>
+
+          <div class="mt-4 rounded-md border border-dashed border-border bg-surface p-3 text-xs text-muted-foreground">
+            <p class="font-medium text-foreground">Demo accounts</p>
+            <p class="mt-1">Subscriber: demo@gstinportal.com / 123456</p>
+            <p>Admin: admin@gstinportal.com / admin123</p>
+          </div>
+
+          <p class="mt-6 text-center text-xs text-muted-foreground">
+            New here? <a href="register.html" class="text-primary hover:underline">Create an account</a>
+          </p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const pass = document.getElementById('password').value;
+
+      if (email === 'demo@gstinportal.com' && pass === '123456') {
+        localStorage.setItem('session', JSON.stringify({ role: 'subscriber', name: 'Rahul Sharma' }));
+        window.location.href = 'dashboard/index.html';
+      } else if (email === 'admin@gstinportal.com' && pass === 'admin123') {
+        localStorage.setItem('session', JSON.stringify({ role: 'admin', name: 'Admin' }));
+        window.location.href = 'admin/dashboard.html';
+      } else {
+        alert('Invalid credentials. Try the demo accounts provided below.');
+      }
+    });
+  </script>
+</body>
+</html>
+
+

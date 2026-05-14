@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — GSTverify</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+  <style>
+    .payment-method { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 3rem; margin-bottom: 0.75rem; }
+    .payment-method:hover { border-color: var(--primary); background: var(--accent); }
+    .payment-method.selected { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); ring: 1px solid var(--primary); }
+    .order-summary { background: white; padding: 1.5rem; border-radius: calc(var(--radius) + 4px); border: 1px solid var(--border); }
+    .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="auth-shell">
+    <header class="auth-header">
+      <div class="mx-auto flex w-full max-w-7xl items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2">
+          <div class="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <span class="font-serif text-lg font-bold">GSTverify</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="flex-1 py-12">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-8 lg:grid-cols-12">
+          <div class="lg:col-span-8">
+            <h1 class="text-3xl font-bold mb-6">Checkout</h1>
+            
+            <section class="mb-8">
+              <h2 class="text-lg font-bold mb-4">Payment Method</h2>
+              <div class="payment-method selected" onclick="selectPayment(this)">
+                <input type="radio" name="payment" checked>
+                <div class="flex-1">
+                  <p class="font-medium">UPI / QR Code</p>
+                  <p class="text-xs text-muted-foreground">Pay via Google Pay, PhonePe, Paytm</p>
+                </div>
+                <div class="flex gap-2">
+                   <img src="https://img.icons8.com/color/48/000000/upi.png" width="32" alt="UPI">
+                </div>
+              </div>
+              <div class="payment-method" onclick="selectPayment(this)">
+                <input type="radio" name="payment">
+                <div class="flex-1">
+                  <p class="font-medium">Credit / Debit Card</p>
+                  <p class="text-xs text-muted-foreground">Visa, Mastercard, RuPay</p>
+                </div>
+                <div class="flex gap-2">
+                   <img src="https://img.icons8.com/color/48/000000/visa.png" width="32" alt="Visa">
+                   <img src="https://img.icons8.com/color/48/000000/mastercard.png" width="32" alt="MC">
+                </div>
+              </div>
+              <div class="payment-method" onclick="selectPayment(this)">
+                <input type="radio" name="payment">
+                <div class="flex-1">
+                  <p class="font-medium">Net Banking</p>
+                  <p class="text-xs text-muted-foreground">All major Indian banks</p>
+                </div>
+              </div>
+            </section>
+
+            <button id="payBtn" class="btn btn-primary btn-lg w-full">Pay Now</button>
+            <p class="mt-4 text-center text-xs text-muted-foreground">
+              Secure payment powered by Razorpay Mock
+            </p>
+          </div>
+
+          <div class="lg:col-span-4">
+            <div class="order-summary sticky top-24">
+              <h2 class="text-lg font-bold mb-4">Order Summary</h2>
+              <div class="flex justify-between text-sm mb-2">
+                <span class="text-muted-foreground">Plan</span>
+                <span id="planName" class="font-medium">Professional</span>
+              </div>
+              <div class="flex justify-between text-sm mb-4">
+                <span class="text-muted-foreground">Validity</span>
+                <span class="font-medium">1 Year</span>
+              </div>
+              <div class="border-t pt-4 space-y-2">
+                <div class="flex justify-between text-sm">
+                  <span>Subtotal</span>
+                  <span id="planPrice">₹19,999</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span>GST (18%)</span>
+                  <span id="taxAmount">₹3,600</span>
+                </div>
+                <div class="flex justify-between text-lg font-bold border-t pt-2 mt-2">
+                  <span>Total</span>
+                  <span id="totalAmount">₹23,599</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/mock-data.js"></script>
+  <script>
+    function selectPayment(el) {
+      document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+      el.classList.add('selected');
+      el.querySelector('input').checked = true;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const planId = urlParams.get('plan') || 'professional';
+    const plan = PLANS.find(p => p.id === planId) || PLANS[1];
+
+    document.getElementById('planName').innerText = plan.name;
+    document.getElementById('planPrice').innerText = plan.priceLabel;
+    
+    if (typeof plan.price === 'number') {
+      const tax = Math.round(plan.price * 0.18);
+      const total = plan.price + tax;
+      document.getElementById('taxAmount').innerText = '₹' + tax.toLocaleString();
+      document.getElementById('totalAmount').innerText = '₹' + total.toLocaleString();
+    } else {
+      document.getElementById('taxAmount').innerText = '—';
+      document.getElementById('totalAmount').innerText = 'Contact Sales';
+    }
+
+    document.getElementById('payBtn').addEventListener('click', function() {
+      const btn = this;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loader"></span> Processing Payment...';
+      
+      setTimeout(() => {
+        window.location.href = 'payment-success.html';
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
+
+

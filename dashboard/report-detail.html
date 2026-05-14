@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Detail — GSTverify</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/responsive.css">
+  <style>
+    .filter-btn { padding: 0.375rem 0.75rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 500; border: none; background: var(--surface); color: var(--muted-foreground); cursor: pointer; }
+    .filter-btn.active { background: var(--primary); color: white; }
+    .search-input { padding-left: 2.25rem; }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside id="sidebar" class="sidebar hidden lg:flex">
+       <div class="flex h-16 items-center border-b px-5">
+        <a href="../index.html" class="flex items-center gap-2">
+          <div class="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <span class="font-serif text-lg font-bold">GSTverify</span>
+        </a>
+      </div>
+      <nav class="flex-1 overflow-y-auto p-3">
+        <a href="index.html" class="nav-link">Dashboard</a>
+        <a href="upload.html" class="nav-link">Upload GSTIN Excel</a>
+        <a href="reports.html" class="nav-link active">Reports</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <h1 id="reportIdHeader" class="text-sm font-medium">Report RPT-1001</h1>
+      </header>
+
+      <main class="flex-1 p-4 sm:p-6 lg:p-8">
+        <div class="space-y-6">
+          <div>
+            <a href="reports.html" class="btn btn-ghost btn-sm mb-3" style="margin-left: -0.5rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Back to reports
+            </a>
+            <div class="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h1 id="reportIdTitle" class="font-serif text-3xl font-bold">RPT-1001</h1>
+                <p id="reportSubTitle" class="text-sm text-muted-foreground">vendor-gstin-list.xlsx · 14 May 2026</p>
+              </div>
+              <button onclick="alert('Download will be connected after backend integration')" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                Download Excel
+              </button>
+            </div>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="card p-4">
+              <p class="text-xs uppercase tracking-wider text-muted-foreground">Total</p>
+              <p id="statTotal" class="mt-1 font-serif text-2xl font-bold">250</p>
+            </div>
+            <div class="card p-4">
+              <p class="text-xs uppercase tracking-wider text-muted-foreground">Active</p>
+              <p id="statActive" class="mt-1 font-serif text-2xl font-bold text-success">220</p>
+            </div>
+            <div class="card p-4">
+              <p class="text-xs uppercase tracking-wider text-muted-foreground">Cancelled / Invalid</p>
+              <p id="statInvalid" class="mt-1 font-serif text-2xl font-bold text-warning">30</p>
+            </div>
+            <div class="card p-4">
+              <p class="text-xs uppercase tracking-wider text-muted-foreground">Failed</p>
+              <p id="statFailed" class="mt-1 font-serif text-2xl font-bold text-destructive">0</p>
+            </div>
+          </div>
+
+          <div class="card p-0 overflow-hidden">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b p-4">
+              <div id="filterGroup" class="flex flex-wrap gap-1.5">
+                <button class="filter-btn active" data-filter="All">All</button>
+                <button class="filter-btn" data-filter="Active">Active</button>
+                <button class="filter-btn" data-filter="Cancelled">Cancelled</button>
+                <button class="filter-btn" data-filter="Invalid">Invalid</button>
+                <button class="filter-btn" data-filter="Suspended">Suspended</button>
+              </div>
+              <div class="relative w-full sm:w-64">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute" style="left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--muted-foreground);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" id="searchInput" class="form-control search-input" placeholder="Search GSTIN or name…">
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-surface text-xs uppercase tracking-wider text-muted-foreground">
+                  <tr>
+                    <th class="px-5 py-3 text-left">Sr</th>
+                    <th class="px-5 py-3 text-left">GSTIN</th>
+                    <th class="px-5 py-3 text-left">Legal name</th>
+                    <th class="px-5 py-3 text-left">Trade name</th>
+                    <th class="px-5 py-3 text-left">Status</th>
+                    <th class="px-5 py-3 text-left">State</th>
+                    <th class="px-5 py-3 text-left">Remarks</th>
+                  </tr>
+                </thead>
+                <tbody id="resultsTableBody">
+                  <!-- JS populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../assets/js/mock-data.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const reportId = urlParams.get('id') || 'RPT-1001';
+      const report = MOCK_REPORTS.find(r => r.id === reportId) || MOCK_REPORTS[0];
+
+      document.getElementById('reportIdHeader').innerText = 'Report ' + report.id;
+      document.getElementById('reportIdTitle').innerText = report.id;
+      document.getElementById('reportSubTitle').innerText = report.fileName + ' · ' + report.date;
+      
+      document.getElementById('statTotal').innerText = report.total;
+      document.getElementById('statActive').innerText = report.active;
+      document.getElementById('statInvalid').innerText = report.cancelled + report.invalid;
+      document.getElementById('statFailed').innerText = Math.max(0, report.total - report.active - report.cancelled - report.invalid);
+
+      const tbody = document.getElementById('resultsTableBody');
+      const searchInput = document.getElementById('searchInput');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      
+      let currentFilter = 'All';
+      let searchQuery = '';
+
+      function renderTable() {
+        const filtered = MOCK_GSTIN_RESULTS.filter(r => {
+          const matchesFilter = currentFilter === 'All' || r.status === currentFilter;
+          const matchesSearch = !searchQuery || r.gstin.toLowerCase().includes(searchQuery) || r.legalName.toLowerCase().includes(searchQuery);
+          return matchesFilter && matchesSearch;
+        });
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="px-5 py-10 text-center text-muted-foreground">No matching records.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(r => `
+          <tr class="border-t border-border">
+            <td class="px-5 py-3 text-muted-foreground">${r.sr}</td>
+            <td class="px-5 py-3 font-mono text-xs">${r.gstin}</td>
+            <td class="px-5 py-3">${r.legalName}</td>
+            <td class="px-5 py-3">${r.tradeName}</td>
+            <td class="px-5 py-3">
+              <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                r.status === 'Active' ? 'bg-success text-success' : 
+                r.status === 'Cancelled' ? 'bg-warning text-warning' : 
+                r.status === 'Invalid' ? 'bg-destructive text-destructive' : 'bg-warning text-warning'
+              }" style="background-color: ${
+                r.status === 'Active' ? 'rgba(16, 185, 129, 0.1)' : 
+                r.status === 'Cancelled' ? 'rgba(245, 158, 11, 0.1)' : 
+                r.status === 'Invalid' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)'
+              }">
+                ${r.status}
+              </span>
+            </td>
+            <td class="px-5 py-3 text-muted-foreground">${r.state}</td>
+            <td class="px-5 py-3 text-muted-foreground">${r.remarks}</td>
+          </tr>
+        `).join('');
+      }
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          renderTable();
+        });
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase();
+        renderTable();
+      });
+
+      renderTable();
+    });
+  </script>
+</body>
+</html>
+
+

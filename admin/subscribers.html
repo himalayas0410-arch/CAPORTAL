@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribers — Admin Console</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="admin-sidebar">
+      <div class="flex h-16 items-center border-b border-slate-800 px-5">
+        <span class="font-serif text-lg font-bold text-white">Admin Console</span>
+      </div>
+      <nav class="flex-1 p-2">
+        <a href="dashboard.html" class="admin-nav-link">Dashboard</a>
+        <a href="subscribers.html" class="admin-nav-link active">Subscribers</a>
+        <a href="plans.html" class="admin-nav-link">Plans</a>
+        <a href="reports.html" class="admin-nav-link">Reports</a>
+        <a href="payments.html" class="admin-nav-link">Payments</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <h1 class="text-sm font-medium">Subscribers</h1>
+      </header>
+
+      <main class="flex-1 p-4 sm:p-6 lg:p-8">
+        <div class="space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+             <h2 class="text-2xl font-bold">Subscriber Management</h2>
+             <div class="flex gap-2">
+                <input type="text" id="searchInput" class="form-control w-64" placeholder="Search subscribers...">
+                <button class="btn btn-primary">Search</button>
+             </div>
+          </div>
+
+          <div class="card p-0 overflow-hidden">
+             <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                   <thead class="bg-slate-50 text-xs uppercase text-muted-foreground font-medium">
+                      <tr>
+                         <th class="px-5 py-3">Subscriber</th>
+                         <th class="px-5 py-3">Company</th>
+                         <th class="px-5 py-3">Plan</th>
+                         <th class="px-5 py-3">Status</th>
+                         <th class="px-5 py-3">Expiry</th>
+                         <th class="px-5 py-3 text-right">Action</th>
+                      </tr>
+                   </thead>
+                   <tbody id="subscribersBody">
+                      <!-- JS populated -->
+                   </tbody>
+                </table>
+             </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../assets/js/mock-data.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tbody = document.getElementById('subscribersBody');
+      const searchInput = document.getElementById('searchInput');
+
+      function render(query = '') {
+        const filtered = MOCK_SUBSCRIBERS.filter(s => 
+          s.name.toLowerCase().includes(query) || 
+          s.company.toLowerCase().includes(query) ||
+          s.email.toLowerCase().includes(query)
+        );
+
+        tbody.innerHTML = filtered.map(s => `
+          <tr class="border-t border-slate-100 hover:bg-slate-50">
+            <td class="px-5 py-3">
+               <div class="font-medium">${s.name}</div>
+               <div class="text-xs text-muted-foreground">${s.email}</div>
+            </td>
+            <td class="px-5 py-3 text-muted-foreground">${s.company}</td>
+            <td class="px-5 py-3">${s.plan}</td>
+            <td class="px-5 py-3">
+               <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                 s.status === 'Active' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+               }">${s.status}</span>
+            </td>
+            <td class="px-5 py-3 text-muted-foreground">${s.expiry}</td>
+            <td class="px-5 py-3 text-right">
+               <button onclick="alert('Subscriber edit mode...')" class="btn btn-ghost btn-sm">Edit</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      searchInput.addEventListener('input', (e) => render(e.target.value.toLowerCase()));
+      render();
+    });
+  </script>
+</body>
+</html>
+
+

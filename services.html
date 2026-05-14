@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — GSTverify</title>
+  <meta name="description" content="GSTIN verification service: upload Excel, bulk-check GSTIN status, and download a verified report.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-md">
+    <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <a href="index.html" class="flex items-center gap-2.5">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="font-serif text-xl font-bold tracking-tight">GSTverify</span>
+          <span class="text-xs uppercase tracking-widest text-muted-foreground font-semibold" style="font-size:10px;">GSTIN Portal</span>
+        </div>
+      </a>
+      <nav class="hidden flex-1 items-center justify-center gap-8 md:flex">
+        <a href="index.html" class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Home</a>
+        <a href="about.html" class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">About</a>
+        <a href="services.html" class="text-sm font-medium text-foreground transition-colors hover:text-primary">Services</a>
+        <a href="pricing.html" class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Pricing</a>
+        <a href="contact.html" class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">Contact</a>
+      </nav>
+      <div class="hidden items-center md:flex">
+        <a href="dashboard/index.html" class="btn btn-primary rounded-xl px-6 py-2.5 font-bold shadow-md">Go to Dashboard</a>
+      </div>
+      <button class="md:hidden mobile-nav-toggle p-2 text-foreground" aria-label="Toggle menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mobile-nav hidden border-t border-slate-100 bg-white/95 backdrop-blur-lg md:hidden">
+      <div class="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-6">
+        <a href="index.html" class="rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-surface">Home</a>
+        <a href="about.html" class="rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-surface">About</a>
+        <a href="services.html" class="rounded-xl px-4 py-3 text-sm font-bold text-primary bg-primary/5">Services</a>
+        <a href="pricing.html" class="rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-surface">Pricing</a>
+        <a href="contact.html" class="rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-surface">Contact</a>
+        <div class="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-6">
+          <a href="login.html" class="btn btn-outline w-full rounded-xl py-3 font-bold">Login</a>
+          <a href="dashboard/index.html" class="btn btn-primary w-full rounded-xl py-3 font-bold">Go to Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="border-b bg-surface py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <p class="text-xs uppercase tracking-widest text-primary font-bold">Services</p>
+        <h1 class="mt-2 font-serif text-4xl font-bold sm:text-5xl">Bulk GSTIN verification, end to end</h1>
+        <p class="mt-4 max-w-2xl text-muted-foreground">
+          Upload your GSTIN list, let the system verify each record, and download a clean Excel report — all from one secure subscriber dashboard.
+        </p>
+      </div>
+    </section>
+
+    <!-- How the service works -->
+    <section class="py-16">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h2 class="font-serif text-2xl font-bold">How the service works</h2>
+        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="card">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+            <h3 class="mt-3 font-serif text-lg font-bold">1. Upload Excel</h3>
+            <p class="mt-1 text-sm text-muted-foreground">Drop your file with a GSTIN column.</p>
+          </div>
+          <div class="card">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <h3 class="mt-3 font-serif text-lg font-bold">2. Bulk Verification</h3>
+            <p class="mt-1 text-sm text-muted-foreground">Each GSTIN is checked for status.</p>
+          </div>
+          <div class="card">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <h3 class="mt-3 font-serif text-lg font-bold">3. Report Generated</h3>
+            <p class="mt-1 text-sm text-muted-foreground">A formatted Excel report is created.</p>
+          </div>
+          <div class="card">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <h3 class="mt-3 font-serif text-lg font-bold">4. Share with team</h3>
+            <p class="mt-1 text-sm text-muted-foreground">Download and share with your finance team.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service features -->
+    <section class="border-t bg-surface py-16">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h2 class="font-serif text-2xl font-bold">Service features</h2>
+        <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <li class="flex items-start gap-2 rounded-lg border bg-card p-4 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Excel upload (.xlsx, .xls, .csv)
+          </li>
+          <li class="flex items-start gap-2 rounded-lg border bg-card p-4 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Bulk verification of thousands of records
+          </li>
+          <li class="flex items-start gap-2 rounded-lg border bg-card p-4 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Status checking — Active / Cancelled / Invalid / Suspended
+          </li>
+          <li class="flex items-start gap-2 rounded-lg border bg-card p-4 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Excel report generation
+          </li>
+          <li class="flex items-start gap-2 rounded-lg border bg-card p-4 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Subscriber-only secure access
+          </li>
+          <li class="flex items-start gap-2 rounded-lg border bg-card p-4 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-success"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Simultaneous-user usage control
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Supported file format -->
+    <section class="border-t py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <h2 class="font-serif text-2xl font-bold">Supported file format</h2>
+        <p class="mt-2 text-muted-foreground">
+          Your Excel file should contain at minimum a GSTIN column. A business name column is optional but helpful.
+        </p>
+        <div class="mt-6 overflow-hidden rounded-lg border">
+          <table class="w-full text-sm">
+            <thead class="bg-surface">
+              <tr>
+                <th class="px-4 py-3 text-left font-medium">Column</th>
+                <th class="px-4 py-3 text-left font-medium">Required</th>
+                <th class="px-4 py-3 text-left font-medium">Example</th>
+              </tr>
+            </thead>
+            <tbody class="bg-card">
+              <tr class="border-t">
+                <td class="px-4 py-3 font-mono">GSTIN</td>
+                <td class="px-4 py-3"><span class="rounded px-2 py-0.5 text-xs font-medium text-success" style="background:rgba(16,185,129,0.1)">Yes</span></td>
+                <td class="px-4 py-3 font-mono">09ABCDE1234F1Z5</td>
+              </tr>
+              <tr class="border-t">
+                <td class="px-4 py-3 font-mono">Business Name</td>
+                <td class="px-4 py-3 text-muted-foreground">Optional</td>
+                <td class="px-4 py-3">ABC Traders</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-8 flex gap-3">
+          <a href="pricing.html" class="btn btn-primary">View Plans</a>
+          <a href="contact.html" class="btn btn-outline">Talk to us</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t bg-card">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
+      <div class="space-y-3">
+        <a href="index.html" class="flex items-center gap-2">
+          <div class="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <span class="font-serif text-lg font-bold">GSTverify</span>
+        </a>
+        <p class="text-sm text-muted-foreground">Subscription-based bulk GSTIN verification for accountants, CA firms, and finance teams.</p>
+      </div>
+      <div>
+        <h4 class="mb-3 text-sm font-semibold">Product</h4>
+        <ul class="space-y-2 text-sm text-muted-foreground">
+          <li><a href="services.html" class="hover:text-foreground">Services</a></li>
+          <li><a href="pricing.html" class="hover:text-foreground">Pricing</a></li>
+          <li><a href="login.html" class="hover:text-foreground">Login</a></li>
+          <li><a href="register.html" class="hover:text-foreground">Register</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="mb-3 text-sm font-semibold">Company</h4>
+        <ul class="space-y-2 text-sm text-muted-foreground">
+          <li><a href="about.html" class="hover:text-foreground">About</a></li>
+          <li><a href="contact.html" class="hover:text-foreground">Contact</a></li>
+          <li><a href="admin/login.html" class="hover:text-foreground">Admin</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="mb-3 text-sm font-semibold">Get in touch</h4>
+        <ul class="space-y-2 text-sm text-muted-foreground">
+          <li>support@gstverify.in</li>
+          <li>+91 98765 43210</li>
+          <li>Noida, Uttar Pradesh</li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t">
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
+        <p>© 2026 GSTverify. All rights reserved.</p>
+        <p>Demo prototype — backend not connected.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

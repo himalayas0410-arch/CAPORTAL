@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Processing Verification — GSTverify</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/responsive.css">
+  <style>
+    .progress-bar-container { width: 100%; height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; margin: 2rem 0; }
+    .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s ease; }
+    .log-container { border: 1px solid var(--border); border-radius: 0.5rem; background: #1e293b; color: #94a3b8; font-family: monospace; font-size: 0.75rem; padding: 1rem; height: 150px; overflow-y: auto; }
+    .log-item { margin-bottom: 0.25rem; }
+    .log-item.success { color: #10b981; }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside id="sidebar" class="sidebar hidden lg:flex">
+      <!-- Same sidebar as index -->
+      <div class="flex h-16 items-center border-b px-5">
+        <a href="../index.html" class="flex items-center gap-2">
+          <div class="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <span class="font-serif text-lg font-bold">GSTverify</span>
+        </a>
+      </div>
+      <nav class="flex-1 overflow-y-auto p-3">
+        <a href="index.html" class="nav-link">Dashboard</a>
+        <a href="upload.html" class="nav-link active">Upload</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <h1 class="text-sm font-medium">Processing...</h1>
+      </header>
+
+      <main class="flex flex-1 items-center justify-center p-4">
+        <div class="card max-w-xl w-full text-center">
+          <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+          </div>
+          <h2 class="text-2xl font-bold">Verifying GSTIN Records</h2>
+          <p class="text-muted-foreground mt-2">Please do not close this window. We are checking the status of 250 records with the GST portal.</p>
+          
+          <div class="progress-bar-container">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+          
+          <div class="flex justify-between text-xs text-muted-foreground mb-4">
+            <span id="progressText">0% Completed</span>
+            <span id="recordText">0 / 250 records</span>
+          </div>
+
+          <div id="log" class="log-container text-left">
+            <div class="log-item">Initializing worker...</div>
+          </div>
+
+          <div id="completionActions" class="hidden mt-8 flex gap-3 justify-center">
+             <a href="report-detail.html?id=RPT-1001" class="btn btn-primary">View Report</a>
+             <button onclick="alert('Download will be connected after backend integration')" class="btn btn-outline">Download Excel</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const bar = document.getElementById('progressBar');
+      const text = document.getElementById('progressText');
+      const record = document.getElementById('recordText');
+      const log = document.getElementById('log');
+      const actions = document.getElementById('completionActions');
+      
+      let progress = 0;
+      const total = 250;
+      
+      const messages = [
+        "Connecting to GSTN gateway...",
+        "Validating GSTIN formats...",
+        "Fetching status for batch 1...",
+        "Batch 1 processed. 50 records verified.",
+        "Fetching status for batch 2...",
+        "Batch 2 processed. 100 records verified.",
+        "Fetching status for batch 3...",
+        "Batch 3 processed. 150 records verified.",
+        "Fetching status for batch 4...",
+        "Batch 4 processed. 200 records verified.",
+        "Finalizing report generation...",
+        "Verification complete!"
+      ];
+      
+      let msgIndex = 0;
+
+      const interval = setInterval(() => {
+        progress += 1;
+        bar.style.width = progress + '%';
+        text.innerText = progress + '% Completed';
+        record.innerText = Math.floor((progress / 100) * total) + ' / ' + total + ' records';
+        
+        if (progress % 8 === 0 && msgIndex < messages.length) {
+          const item = document.createElement('div');
+          item.className = 'log-item' + (msgIndex === messages.length - 1 ? ' success' : '');
+          item.innerText = '> ' + messages[msgIndex];
+          log.appendChild(item);
+          log.scrollTop = log.scrollHeight;
+          msgIndex++;
+        }
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          text.innerText = '100% Completed';
+          record.innerText = '250 / 250 records';
+          actions.classList.remove('hidden');
+        }
+      }, 50);
+    });
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Reports — GSTverify</title>
+  <link rel="stylesheet" href="../assets/css/style.css"><link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="admin-sidebar">
+       <div class="flex h-16 items-center border-b border-slate-800 px-5">
+        <span class="font-serif text-lg font-bold text-white">Admin Console</span>
+      </div>
+      <nav class="flex-1 p-2">
+        <a href="dashboard.html" class="admin-nav-link">Dashboard</a>
+        <a href="subscribers.html" class="admin-nav-link">Subscribers</a>
+        <a href="plans.html" class="admin-nav-link">Plans</a>
+        <a href="reports.html" class="admin-nav-link active">Reports</a>
+        <a href="payments.html" class="admin-nav-link">Payments</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <header class="topbar">
+        <h1 class="text-sm font-medium">System Reports</h1>
+      </header>
+
+      <main class="flex-1 p-4 sm:p-6 lg:p-8">
+        <div class="space-y-6">
+          <h2 class="text-2xl font-bold">Verification Logs</h2>
+          
+          <div class="card p-0 overflow-hidden">
+             <table class="w-full text-sm text-left">
+                <thead class="bg-slate-50 text-xs uppercase text-muted-foreground">
+                   <tr>
+                      <th class="px-5 py-3">Report ID</th>
+                      <th class="px-5 py-3">Subscriber</th>
+                      <th class="px-5 py-3">File Name</th>
+                      <th class="px-5 py-3 text-right">Records</th>
+                      <th class="px-5 py-3">Status</th>
+                   </tr>
+                </thead>
+                <tbody>
+                   <tr class="border-t border-slate-100">
+                      <td class="px-5 py-3 font-mono text-xs text-primary">RPT-1001</td>
+                      <td class="px-5 py-3">Rahul Sharma</td>
+                      <td class="px-5 py-3">vendor-list.xlsx</td>
+                      <td class="px-5 py-3 text-right">250</td>
+                      <td class="px-5 py-3 text-success">Completed</td>
+                   </tr>
+                   <tr class="border-t border-slate-100">
+                      <td class="px-5 py-3 font-mono text-xs text-primary">RPT-1002</td>
+                      <td class="px-5 py-3">Neha Gupta</td>
+                      <td class="px-5 py-3">suppliers.csv</td>
+                      <td class="px-5 py-3 text-right">120</td>
+                      <td class="px-5 py-3 text-success">Completed</td>
+                   </tr>
+                </tbody>
+             </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
+
+

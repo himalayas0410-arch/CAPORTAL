@@ -1,0 +1,44 @@
+/* Responsive Styles */
+
+@media (max-width: 1024px) {
+  .lg\:grid-cols-12 { grid-template-columns: 1fr !important; }
+  .lg\:col-span-7, .lg\:col-span-5 { grid-column: auto !important; }
+  .lg\:py-32 { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+}
+
+@media (max-width: 768px) {
+  /* Navbar */
+  .md\:flex { display: none !important; }
+  .md\:hidden { display: block !important; }
+  
+  /* Hero */
+  .text-5xl, .text-6xl, .text-7xl { font-size: 2.5rem !important; line-height: 1.2 !important; }
+  
+  /* Grids */
+  .grid-cols-2, .grid-cols-3, .grid-cols-4, .grid-cols-12 { 
+    grid-template-columns: 1fr !important; 
+  }
+  
+  /* Spacing */
+  .gap-16 { gap: 2rem !important; }
+  .py-20 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+  .mt-16 { margin-top: 2rem !important; }
+  .mt-12 { margin-top: 1.5rem !important; }
+  
+  /* Component adjustments */
+  .btn-lg { width: 100%; }
+  .stats-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+}
+
+@media (min-width: 769px) {
+  .md\:flex { display: flex !important; }
+  .md\:hidden { display: none !important; }
+}
+
+/* Fix for container width on ultra-wide screens */
+@media (min-width: 1280px) {
+  .mx-auto.max-w-7xl {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
