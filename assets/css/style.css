@@ -219,6 +219,10 @@ img {
   display: none;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -1784,4 +1788,34 @@ label {
     padding-top: 8rem;
     padding-bottom: 8rem;
   }
+}
+.mobile-nav-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  transition: background 0.2s;
+}
+.mobile-nav-toggle:hover {
+  background: var(--accent);
+}
+.mobile-nav {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  transform-origin: top;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (min-width: 769px) {
+  .mobile-nav {
+    display: none !important;
+  }
+}
+.mobile-nav.hidden {
+  display: none !important;
 }

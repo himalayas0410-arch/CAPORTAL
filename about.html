@@ -7,7 +7,56 @@
   <link rel="stylesheet" href="assets/css/style.css"><link rel="stylesheet" href="assets/css/responsive.css">
 </head>
 <body>
-  <div id="header-placeholder"></div>
+  <header class="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-md">
+  <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center gap-2.5">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="flex flex-col leading-tight">
+        <span class="font-serif text-xl font-bold tracking-tight">GSTverify</span>
+        <span class="text-xs uppercase tracking-widest text-muted-foreground font-semibold" style="font-size:10px;letter-spacing:0.2em;">GSTIN Portal</span>
+      </div>
+    </a>
+
+    <!-- Centered Nav (Visible on Desktop) -->
+    <nav class="hidden flex-1 items-center justify-center gap-8 md:flex main-nav">
+      <a href="index.html" data-nav="index" class="text-sm font-medium transition-colors hover:text-primary">Home</a>
+      <a href="about.html" data-nav="about" class="text-sm font-medium transition-colors hover:text-primary">About</a>
+      <a href="services.html" data-nav="services" class="text-sm font-medium transition-colors hover:text-primary">Services</a>
+      <a href="pricing.html" data-nav="pricing" class="text-sm font-medium transition-colors hover:text-primary">Pricing</a>
+      <a href="contact.html" data-nav="contact" class="text-sm font-medium transition-colors hover:text-primary">Contact</a>
+    </nav>
+
+    <!-- Right Action -->
+    <div class="hidden items-center md:flex">
+      <a href="dashboard/index.html" class="btn btn-primary rounded-xl px-6 py-2.5 font-bold shadow-md">
+        Go to Dashboard
+      </a>
+    </div>
+
+    <!-- Mobile Menu Toggle Button -->
+    <button id="mobile-menu-toggle" class="md:hidden mobile-nav-toggle p-2 text-foreground relative z-50" aria-label="Toggle menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile Nav Menu (Hidden by default) -->
+  <div id="mobile-nav-container" class="mobile-nav hidden border-t border-slate-100 bg-white shadow-xl">
+    <div class="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-6 mobile-nav-links">
+      <a href="index.html" data-nav="index" class="rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">Home</a>
+      <a href="about.html" data-nav="about" class="rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">About</a>
+      <a href="services.html" data-nav="services" class="rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">Services</a>
+      <a href="pricing.html" data-nav="pricing" class="rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">Pricing</a>
+      <a href="contact.html" data-nav="contact" class="rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">Contact</a>
+      <div class="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-6">
+        <a href="login.html" class="btn btn-outline w-full rounded-xl py-3 font-bold">Login</a>
+        <a href="dashboard/index.html" class="btn btn-primary w-full rounded-xl py-3 font-bold">Go to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</header>
 
   <main>
     <section class="border-b bg-surface py-20">
@@ -79,7 +128,52 @@
     </section>
   </main>
 
-  <div id="footer-placeholder"></div>
+  <footer class="border-t bg-card">
+  <div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
+    <div class="space-y-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <span class="font-serif text-lg font-bold">GSTverify</span>
+      </a>
+      <p class="text-sm text-muted-foreground">
+        Subscription-based bulk GSTIN verification for accountants, CA firms, and finance teams.
+      </p>
+    </div>
+    <div>
+      <h4 class="mb-3 text-sm font-semibold">Product</h4>
+      <ul class="space-y-2 text-sm text-muted-foreground">
+        <li><a href="services.html" class="hover:text-foreground">Services</a></li>
+        <li><a href="pricing.html" class="hover:text-foreground">Pricing</a></li>
+        <li><a href="login.html" class="hover:text-foreground">Login</a></li>
+        <li><a href="register.html" class="hover:text-foreground">Register</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="mb-3 text-sm font-semibold">Company</h4>
+      <ul class="space-y-2 text-sm text-muted-foreground">
+        <li><a href="about.html" class="hover:text-foreground">About</a></li>
+        <li><a href="contact.html" class="hover:text-foreground">Contact</a></li>
+        <li><a href="admin/login.html" class="hover:text-foreground">Admin</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="mb-3 text-sm font-semibold">Get in touch</h4>
+      <ul class="space-y-2 text-sm text-muted-foreground">
+        <li>support@gstverify.in</li>
+        <li>+91 98765 43210</li>
+        <li>Noida, Uttar Pradesh</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t">
+    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
+      <p>© 2026 GSTverify. All rights reserved.</p>
+      <p>Demo prototype — backend not connected.</p>
+    </div>
+  </div>
+</footer>
 
   <script src="assets/js/main.js"></script>
 </body>
