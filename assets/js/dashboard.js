@@ -1,41 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  const sidebar = document.querySelector('aside');
-  const openBtn = document.querySelector('header button[aria-label="Open menu"]');
-  const overlay = document.getElementById('sidebarOverlay');
-  const logoutBtns = document.querySelectorAll('.logout-btn');
-
-  // Sidebar Logic
-  if (openBtn && sidebar && overlay) {
-    openBtn.addEventListener('click', () => {
-      sidebar.classList.remove('-translate-x-full');
-      overlay.classList.remove('hidden');
-    });
-
-    overlay.addEventListener('click', () => {
-      sidebar.classList.add('-translate-x-full');
-      overlay.classList.add('hidden');
-    });
-  }
-
-  // Logout Logic
-  logoutBtns.forEach(btn => {
-    btn.addEventListener('click', async () => {
-      await window.authBackend.signOut();
-    });
-  });
-
-  // Mobile menu links click
-  const navLinks = document.querySelectorAll('aside nav a');
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      if (window.innerWidth < 1024) {
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-      }
-    });
-  });
-
-  // --- Backend Integration ---
+  // --- Dashboard Content Logic ---
   
   // 1. Get User Data
   const user = await window.authBackend.getCurrentUser();

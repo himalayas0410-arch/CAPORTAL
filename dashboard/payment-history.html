@@ -59,7 +59,25 @@
 
     <div class="main-content">
       <header class="topbar">
-        <h1 class="text-sm font-medium">Payment History</h1>
+        <div class="flex items-center gap-3">
+          <button class="lg:hidden" aria-label="Open menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+          </button>
+          <p class="text-sm text-muted-foreground">
+            <span class="hidden sm:inline">Welcome back, </span>
+            <span id="userName" class="font-medium text-foreground">User</span>
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="headerPlanTag" class="hidden rounded-full px-3 py-1 text-xs font-medium text-primary bg-primary/10 sm:inline-block">
+            Loading...
+          </span>
+          <button class="relative rounded-md p-2 text-muted-foreground hover:bg-muted" aria-label="Notifications">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary"></span>
+          </button>
+          <button class="logout-btn btn btn-ghost btn-sm">Logout</button>
+        </div>
       </header>
 
       <main class="flex-1 p-4 sm:p-6 lg:p-8">
@@ -133,12 +151,7 @@
         }).join('');
       }
 
-      // Logout
-      document.querySelectorAll('.logout-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          await window.authBackend.signOut();
-        });
-      });
+      }
     });
   </script>
 
@@ -154,6 +167,7 @@
   <script src="../assets/js/profile-backend.js"></script>
   <script src="../assets/js/contact-support-backend.js"></script>
   <script src="../assets/js/admin-backend.js"></script>
+  <script src="../assets/js/dashboard-layout.js"></script>
 </body>
 </html>
 
